@@ -15,15 +15,6 @@ comb <- function(x, ...) {
          function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))
 }
 
-# Convert a list of lists of matrices into a list of arrays
-final <- function(r) {
-  lapply(r, function(s) abind(s, along=3))
-}
-comb3 <- function(x, ...) {
-  lapply(seq_along(x),
-         function (i) abind())
-}
-
 #' conditional covariance matrix
 #'
 #' compute the conditional covariance of s given its neighbors N(s)
