@@ -1,0 +1,29 @@
+Package: spatialT2
+Type: Package
+Title: Spatial inference and predictions using the univariate and multivariate Spatial-T model.
+Version: 1.0
+Date: 2021-05-26
+Authors@R: 
+    person(given = "Isabelle",
+           family = "Grenier",
+           role = c("aut", "cre"),
+           email = "igrenier@ucsc.edu",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Maintainer: Isabelle Grenier <igrenier@ucsc.edu>
+Description: This package implements the non-isotropic spatial model Spatial-T?
+    Both the univariate and multivariate versions are available. The package
+    allows for the MCMC version as well as the marginal maximization version
+    which is faster for large spatial datasets.
+License: GPL (>= 2)
+Imports: Rcpp (>= 1.0.5), spNNGP (>= 0.1.5), RcppArmadillo, RcppParallel, dplyr,
+    fields, ggplot2, RandomFields, geoR, MASS, spBayes, MCMCpack, RConics, optimx, 
+    doParallel
+LinkingTo: Rcpp, RcppArmadillo, RcppParallel
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
