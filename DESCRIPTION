@@ -16,8 +16,7 @@ Description: This package implements the non-isotropic spatial model Spatial-T?
     which is faster for large spatial datasets.
 License: GPL (>= 2)
 Imports: Rcpp (>= 1.0.5), spNNGP (>= 0.1.5), RcppArmadillo, RcppParallel, dplyr,
-    fields, ggplot2, RandomFields, geoR, MASS, spBayes, MCMCpack, RConics, optimx, 
-    doParallel
+    fields, ggplot2, RandomFields, geoR, MASS, spBayes, MCMCpack, RConics, doParallel
 LinkingTo: Rcpp, RcppArmadillo, RcppParallel
 Encoding: UTF-8
 LazyData: true
