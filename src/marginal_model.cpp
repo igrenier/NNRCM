@@ -21,6 +21,18 @@ double determinant_rcpp_arm(arma::mat& C, arma::colvec vec_C, double C_i) {
 }
 
 // [[Rcpp::export]]
+arma::mat matern_cov(arma::mat distance, double kappa, double sigma double phi,
+                     double alpha, double tau) {
+  
+  arma::mat distance_scaled = (2 * kappa)^(1/2) * distance / phi;
+  arma::mat covariance = 2^(-(kappa - 1)) / gamma(kappa) * 
+    (distance_scaled^kappa) * besselK(x = distance_scaled, nu = kappa);
+  
+  return covariance;
+  
+}
+
+// [[Rcpp::export]]
 double marginal_rcpp_arm(int n_neighbors, double n_obs, 
                          Rcpp::NumericVector& C, Rcpp::NumericVector& C_y, double a,
                          double phi, double sigma, double tau, double small) {
