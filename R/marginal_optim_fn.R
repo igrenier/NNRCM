@@ -43,7 +43,7 @@ conditional.covariance <- function(C, m) {
 #' @param kappa (numeric) smoothness parameter for the Matern covariance function
 #' @return (numeric) the function computes and returns the value of the
 #'                   posterior marginal likelihood for a given set of parameters
-marginal.likelihood.optim <- function(pars, Y, D, smallest.distance, W, n.obs, 
+marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, n.obs, 
                                       m, kappa, cov.family) {
 
   # Name the parameters for ease of understanding
@@ -52,40 +52,9 @@ marginal.likelihood.optim <- function(pars, Y, D, smallest.distance, W, n.obs,
   nu <- as.numeric(pars[3])
   xi <- as.numeric(pars[4])
 
-  # Create list C
-  COVARIANCE <- foreach(x = 1:n.obs,.packages = "geoR",.combine='comb',
-                     .multicombine=TRUE,.init=list(list(), list())) %dopar%{
-    
-       V.x <- array(0, dim = c(m + 1, m + 1))
-       V.x.Y <- array(0, dim = c(m + 1, m + 1))
-                       
-      if(x == 1){
-        V.x[1,1] <- xi
-        V.x.Y[1,1] <- xi + Y[x]^2
-      } else {
-        
-        m.x <- min(m + 1, x)
-        n.ind <- W[[x]]
-        
-        V.x[1:m.x, 1:m.x] <- (alpha - n.obs - 1) * (geoR::cov.spatial(D[1:m.x,1:m.x, x],
-                                                        cov.model = cov.family,
-                                                        cov.pars = c(sig, nu),
-                                                        kappa = kappa) + xi * diag(m.x))
-        
-        V.x.Y[1:m.x, 1:m.x] <- V.x[1:m.x, 1:m.x] + Y[c(x, n.ind)] %*% t(Y[c(x, n.ind)])
-       
-      }
-       
-      list(V.x, V.x.Y)
-                       
-  }
-
-  V.x <- array(as.numeric(unlist(COVARIANCE[[1]])), dim=c(m + 1, m + 1, n.obs))
-  V.x.Y <- array(as.numeric(unlist(COVARIANCE[[2]])), dim=c(m + 1, m + 1, n.obs))
-
   # try coding it using rcpp:
-  marginal <- marginal_rcpp_arm(m, n.obs, V.x, V.x.Y, 
-                                alpha, nu, sig, xi, smallest.distance)
+  marginal <- posterior_marginal(m, n.obs, D, Y_post,
+                                 alpha, kappa, Y, W, nu, sig, xi, smallest.distance)
   
   return(marginal)
 }
@@ -110,112 +79,58 @@ NIGP.marginal.optim.fn <- function(mydata, observed.locations, n.neighbors,
 
   # Extract values
   n.obs <- length(mydata)
+  m <- n.neighbors
   smallest.distance <- min(fields::rdist(observed.locations[1, ], observed.locations[2:n.obs,]))
   
   # Create the neighbor structure
-  W <- create.W.neighbors.matrix.spConjNNGP(observed.locations, n.neighbors)
+  W.list <- create.W.neighbors.matrix.spConjNNGP(observed.locations, n.neighbors)
+  W <- array(0, dim = c(n.obs, n.neighbors))
+  for(i in 2:(m+1)) {
+    W[i, 1:(i-1)] <- seq(1, i - 1) 
+  }
+  W[(m+2):n.obs, ] <- matrix(unlist(W.list)[(m * (m+1) / 2 + 2) : ((n.obs - m - 1) * m + m * (m+1) / 2 + 1)], ncol = 10, byrow = TRUE)
+  W <- cbind(1:n.obs, W)
   
   print("I made it past 1")
   # Compute a list of the distance matrices
   D.array <- array(0, dim = c(n.neighbors + 1, n.neighbors + 1, n.obs))
+  Y.array <- array(0, dim = c(n.neighbors + 1, n.neighbors + 1, n.obs))
+  
   for(x in 2:n.obs) {
     
-    n.ind <- W[[x]]
+    n.ind <- W.list[[x]]
     m.x <- min(n.neighbors + 1, x)
     
     D.array[1:m.x, 1:m.x, x] <- fields::rdist(observed.locations[c(x, n.ind), ], 
                                     observed.locations[c(x, n.ind), ])
+    
+    Y.array[1:m.x, 1:m.x, x] <- mydata[c(x, n.ind)] %*% t(mydata[c(x, n.ind)])
+    
   }
   print("I made it past 2")
   # Fit the optim function
-  cl <- makeCluster(12)
-  registerDoParallel(cl)
+  # cl <- makeCluster(12)
+  # registerDoParallel(cl)
   optim.results <- 
     optim(par = starting.values,
                    fn = marginal.likelihood.optim,
                    Y = mydata,
                    D = D.array,
+                   Y_post = Y.array,
                    smallest.distance = smallest.distance,
                    m = n.neighbors,
-                   W = W,
+                   W = W - 1,
                    n.obs = n.obs,
                    kappa = smoothness,
                    cov.family = cov.family,
                    method = "L-BFGS-B",
                    lower = c(n.obs + 2, 0.01, 0.01, 0.0001),
-                   upper = c(n.obs + 50000, 50000, 50000, 50000),
+                   upper = c(Inf, Inf, Inf, Inf),
                    control = list(fnscale = -1, maxit=10))
   print("I made it past 3")
-  stopCluster(cl)
+  # stopCluster(cl)
   return(optim.results)
 
-}
-
-#' grid wrapper for marginal likelihood (THIS SHOULD BE REMOVED)
-#'
-#' computes the posterior marginal likelihood over a grid of possible values
-#' and outputs the set of parameters with the largest marginal value.
-#'
-#' @param mydata (vector) response value for our dataset
-#' @param observed.distance (matrix) observed distance between all locations (n.obs X n.obs)
-#' @param n.neighbors (integer) number of neighbors to include in N(s)
-#' @param n.observations (integer) number of observations in our dataset
-#' @param alpha (numeric) degrees of freedom of the Wishart distribution
-#' @param smoothness (numeric) smoothness parameter for the Matern covariance function
-#' @param cov.family (string) name of the covariance function (e.g. "matern")
-#' @param grid.values (list) named list of possible values for sigma, nu, and tau.
-#' @return (vector) the function returns a vector of the set of parameters that maximized
-#'   the marginal likelihood.
-NIGP.marginal.grid.fn <- function(mydata, observed.distance, n.neighbors,
-                                  n.observations, alpha, smoothness, cov.family, 
-                                  grid.values) {
-  
-  # remove n.observations and extract from mydata instead
-  # add check that alpha > n.observations + 2
-  
-  sig.lst <- grid.values[["sigma"]]
-  phi.lst <- grid.values[["nu"]]
-  tau.lst <- grid.values[["tau"]]
-  marginal.values <- array(0, dim = c(length(sig.lst), length(phi.lst), length(tau.lst)))
-  
-  W <- create.W.neighbors.matrix(observed.distance, n.neighbors)
-  
-  for(sig in sig.lst){
-    s <- which(sig == sig.lst)
-    for(nu in nu.lst) {
-      n <- which(nu == nu.lst)
-      for(tau in tau.lst){
-        t <- which(tau == tau.lst)
-        # Create covariance prior
-        C <- (alpha - n.observations - 1) * (cov.spatial(observed.distance,
-                                                cov.model = cov.family,
-                                                cov.pars = c(sig, nu),
-                                                kappa = smoothness) + 
-                                               tau * diag(n.observations))
-        
-        # marginal.values[s, n, t] <- marginal_rcpp_arm(n.neighbors, 
-        #                                               n.observations, 
-        #                                               mydata, 
-        #                                               W - 1, 
-        #                                               C, 
-        #                                               alpha,
-        #                                               nu, 
-        #                                               sig, 
-        #                                               tau)
-        
-      }
-    }
-  }
-  
-  max.posterior.index <- arrayInd(which.max(marginal.values), dim(marginal.values))
-  cov.parameters.estimate <- c(alpha, 
-                               sig.lst[max.posterior.index[1]], 
-                               phi.lst[max.posterior.index[2]], 
-                               tau.lst[max.posterior.index[3]])
-  names(cov.parameters.estimate) <- c("alpha", "sigma", "nu", "tau")
-  
-  return(cov.parameters.estimate)
-  
 }
 
 #' posterior prediction function
@@ -290,3 +205,35 @@ NIGP.posterior.predictive <- function(Y, observed.locations, predicted.locations
 
   return(posterior.predictive.Y)
 }
+
+# # Create list C
+# COVARIANCE <- foreach(x = 1:n.obs,.packages = "geoR",.combine='comb',
+#                    .multicombine=TRUE,.init=list(list(), list())) %dopar%{
+#   
+#      V.x <- array(0, dim = c(m + 1, m + 1))
+#      V.x.Y <- array(0, dim = c(m + 1, m + 1))
+#                      
+#     if(x == 1){
+#       V.x[1,1] <- xi
+#       V.x.Y[1,1] <- xi + Y[x]^2
+#     } else {
+#       
+#       m.x <- min(m + 1, x)
+#       n.ind <- W[[x]]
+#       
+#       V.x[1:m.x, 1:m.x] <- (alpha - n.obs - 1) * (geoR::cov.spatial(D[1:m.x,1:m.x, x],
+#                                                       cov.model = cov.family,
+#                                                       cov.pars = c(sig, nu),
+#                                                       kappa = kappa) + xi * diag(m.x))
+#       
+#       V.x.Y[1:m.x, 1:m.x] <- V.x[1:m.x, 1:m.x] + Y[c(x, n.ind)] %*% t(Y[c(x, n.ind)])
+#      
+#     }
+#      
+#     list(V.x, V.x.Y)
+#                      
+# }
+
+# V.x <- array(as.numeric(unlist(COVARIANCE[[1]])), dim=c(m + 1, m + 1, n.obs))
+# V.x.Y <- array(as.numeric(unlist(COVARIANCE[[2]])), dim=c(m + 1, m + 1, n.obs))
+

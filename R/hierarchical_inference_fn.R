@@ -204,11 +204,18 @@ NIGP.hierarchical.rcpp <- function(Y, observed.distance, model, alpha,
     stop("Invalid model choice. The model choices are 'full' and 'reduced'.")
   }
   
-  
-  # Set up neighbors
+  # extract dimensions
   n.obs <- length(Y)
   x.m.all <- c(seq(0, n.neighbors), rep(n.neighbors, n.obs - n.neighbors - 1))
-  W <- create.W.neighbors.matrix(observed.distance, n.neighbors)
+  
+  # Create the neighbor structure
+  W.list <- create.W.neighbors.matrix.spConjNNGP(observed.locations, n.neighbors)
+  W <- array(0, dim = c(n.obs, n.neighbors))
+  for(i in 2:(m+1)) {
+    W[i, 1:(i-1)] <- seq(1, i - 1) 
+  }
+  W[(m+2):n.obs, ] <- matrix(unlist(W.list)[(m * (m+1) / 2 + 2) : ((n.obs - m - 1) * m + m * (m+1) / 2 + 1)], ncol = 10, byrow = TRUE)
+  W <- cbind(1:n.obs, W)
 
   # Set up initial values
   nu.cur <- cov.pars[2]
@@ -220,12 +227,17 @@ NIGP.hierarchical.rcpp <- function(Y, observed.distance, model, alpha,
   beta.cur <- 0
   gamma.cur <- array(0.1, dim = c(n.obs, n.neighbors))
 
-  # Compute the initial Covariance matrices
-  C.lists.cur <- compute.C.lists(observed.distance, cov.family, nu.cur, kappa, nugget, n.neighbors, W)
-  cov.C.array <- C.lists.cur[[1]]
-  vec.C.array <- C.lists.cur[[2]]
-  cond.C.array <- C.lists.cur[[4]]
-  solve.C.array <- C.lists.cur[[3]]
+  # Compute a list of the distance matrices
+  D.array <- array(0, dim = c(n.neighbors + 1, n.neighbors + 1, n.obs))
+  for(x in 2:n.obs) {
+    
+    n.ind <- W.list[[x]]
+    m.x <- min(n.neighbors + 1, x)
+    
+    D.array[1:m.x, 1:m.x, x] <- fields::rdist(observed.locations[c(x, n.ind), ], 
+                                              observed.locations[c(x, n.ind), ])
+    
+  }
 
   # Store samples
   posterior.samples <- list("tau" = rep(NA, mcmc.samples),
@@ -240,10 +252,10 @@ NIGP.hierarchical.rcpp <- function(Y, observed.distance, model, alpha,
   for(i in 1:mcmc.samples) {
     if(i %% 100 == 0) {print(i)}
 
-    samples <- data_loop_rcpp_arm(alpha.cur, n.obs,
-                                  vec.C.array, solve.C.array, cov.C.array, cond.C.array,
+    samples <- data_loop_rcpp_arm(alpha.cur, n.obs, observed.distance,
                                   w.cur, n.neighbors, x.m.all,
-                                  W - 1 , tau.cur, phi.cur, Y, beta.cur, sig.cur)
+                                  W - 1 , tau.cur, phi.cur, Y, beta.cur, sig.cur,
+                                  smoothness, nu.cur)
 
 
     w.cur[(n.neighbors + 1):n.obs] <- samples[(n.neighbors + 1):n.obs, 1]
@@ -261,20 +273,20 @@ NIGP.hierarchical.rcpp <- function(Y, observed.distance, model, alpha,
       sig.cur <- sample.sig.gibbs(sig.prior, w.cur, W, gamma.cur, phi.cur)
 
     } else {
-      # full model
+      # full model (not working currently, need to re-add computing all the C matrices and vectors)
       tau.cur <- sample.tau.gibbs(tau.prior, Y, w.cur, beta.cur)
       sig.cur <- sample.sig.gibbs(sig.prior, w.cur, W, gamma.cur, phi.cur)
-      alpha.cur <- sample.alpha.metropolis(1, alpha.cur, phi.cur, gamma.cur,
-                                           cond.C.array, solve.C.array, vec.C.array, x.m.all)
-      nu.samples <- sample.nu.metropolis(c(3,1), nu.cur, cov.C.array, cond.C.array,
-                                         solve.C.array, vec.C.array, observed.distance,
-                                         cov.family, kappa, n.neighbors, W, n.obs,
-                                         alpha.cur, phi.cur, gamma.cur, x.m.all, nugget)
-      nu.cur <- nu.samples[[1]]
-      cov.C.array <- nu.samples[[2]]
-      vec.C.array <- nu.samples[[3]]
-      cond.C.array <- nu.samples[[4]]
-      solve.C.array <- nu.samples[[5]]
+      # alpha.cur <- sample.alpha.metropolis(1, alpha.cur, phi.cur, gamma.cur,
+      #                                      cond.C.array, solve.C.array, vec.C.array, x.m.all)
+      # nu.samples <- sample.nu.metropolis(c(3,1), nu.cur, cov.C.array, cond.C.array,
+      #                                    solve.C.array, vec.C.array, observed.distance,
+      #                                    cov.family, kappa, n.neighbors, W, n.obs,
+      #                                    alpha.cur, phi.cur, gamma.cur, x.m.all, nugget)
+      # nu.cur <- nu.samples[[1]]
+      # cov.C.array <- nu.samples[[2]]
+      # vec.C.array <- nu.samples[[3]]
+      # cond.C.array <- nu.samples[[4]]
+      # solve.C.array <- nu.samples[[5]]
     }
 
     # Store values
