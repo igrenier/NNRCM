@@ -200,7 +200,7 @@ NNRCM.marginal.predict <- function(Y, observed.locations, predicted.locations,
 #' @return (numeric) the function computes and returns the value of the
 #'                   posterior marginal likelihood for a given set of parameters
 mv.marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, Wnb, n.obs, 
-                                         m, kappa, cov.family, simplified, 
+                                         m, kappa, cov.family, parsimonious , 
                                          coregionalization) {
   
   # Name the parameters for ease of understanding
@@ -218,7 +218,7 @@ mv.marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, 
                                       A, xi, smallest.distance)
     
   } else {
-    if(simplified){
+    if(parsimonious ){
       nu <- rep(as.numeric(pars[5]), 3)
       rho <- sig[3] * (sqrt(kappa[1] * kappa[2]) / mean(c(kappa[1], kappa[2])))
       sig[3] <- sqrt(sig[1] * sig[2]) * rho
@@ -260,7 +260,7 @@ mv.marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, 
 #' @export
 NNRCM.bv.marginal.infer <- function(Y, observed.locations, 
                                       smoothness, 
-                                      starting.values = rep(0, 8), simplified = TRUE, 
+                                      starting.values = rep(0, 8), parsimonious = TRUE, 
                                       mcmc.samples = 1000, n.neighbors = 10,
                                       coregionalization = FALSE, neighbor.info = FALSE,
                                       neighbor.seq = FALSE) {
@@ -413,7 +413,7 @@ NNRCM.bv.marginal.infer <- function(Y, observed.locations,
             n.obs = n.obs,
             kappa = smoothness,
             cov.family = cov.family,
-            simplified = simplified,
+            parsimonious  = parsimonious ,
             coregionalization = TRUE,
             method = "L-BFGS-B",
             lower = c(n.obs + 2, -Inf, -Inf, -Inf, 0.001,0.001, 0.001, 0.001),
@@ -433,7 +433,7 @@ NNRCM.bv.marginal.infer <- function(Y, observed.locations,
             n.obs = n.obs,
             kappa = smoothness,
             cov.family = cov.family,
-            simplified = simplified,
+            parsimonious  = parsimonious ,
             coregionalization = FALSE,
             method = "L-BFGS-B",
             lower = c(n.obs + 2, 0.001, 0.001, -1, 0.001,0.001, 0.001, 0.001),
@@ -447,7 +447,7 @@ NNRCM.bv.marginal.infer <- function(Y, observed.locations,
   if (coregionalization) {
     # the parameters can be use as is without modification.
   } else {
-    if(simplified) {
+    if(parsimonious ) {
       optim.results$par[6] <- optim.results$par[5]
       optim.results$par[4] <- optim.results$par[4] * sqrt(smoothness[1] * smoothness[2]) / smoothness[3]
     } else {
@@ -490,7 +490,7 @@ NNRCM.bv.marginal.infer <- function(Y, observed.locations,
 #' @export
 mv.NNRCM.posterior.predictive <- function(Y, observed.locations, predicted.locations,
                                       point.estimates, n.sim = 1000, n.neighbors = 10,
-                                      smoothness, coregionalization = FALSE, simplified = TRUE) {
+                                      smoothness, coregionalization = FALSE, parsimonious  = TRUE) {
   
   # Adjust the cross smoothness parameter
   smoothness<- c(smoothness[1], smoothness[2], mean(smoothness[1:2]))

@@ -227,7 +227,7 @@ posterior.predictive.marginal <-
   mv.NNRCM.posterior.predictive(Y = training.y.bv, 
                             observed.locations = training.locations, 
                             predicted.locations = testing.locations, 
-                            point.estimates = optim.results.s$par,
+                            point.estimates = optim.results$par,
                             smoothness = kappa.bv)
 
 # scoring
