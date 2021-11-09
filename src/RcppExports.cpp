@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // matern_cov
 arma::mat matern_cov(arma::mat distance, double kappa, double phi);
-RcppExport SEXP _spatialT2_matern_cov(SEXP distanceSEXP, SEXP kappaSEXP, SEXP phiSEXP) {
+RcppExport SEXP _NNRCM_matern_cov(SEXP distanceSEXP, SEXP kappaSEXP, SEXP phiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -21,7 +21,7 @@ END_RCPP
 }
 // conditional_covariance
 double conditional_covariance(arma::mat& C, arma::colvec vec_C, double C_i);
-RcppExport SEXP _spatialT2_conditional_covariance(SEXP CSEXP, SEXP vec_CSEXP, SEXP C_iSEXP) {
+RcppExport SEXP _NNRCM_conditional_covariance(SEXP CSEXP, SEXP vec_CSEXP, SEXP C_iSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -32,9 +32,143 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// mvrnormArma
+const arma::rowvec mvrnormArma(const arma::rowvec mean, const arma::mat variance);
+RcppExport SEXP _NNRCM_mvrnormArma(SEXP meanSEXP, SEXP varianceSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::rowvec >::type mean(meanSEXP);
+    Rcpp::traits::input_parameter< const arma::mat >::type variance(varianceSEXP);
+    rcpp_result_gen = Rcpp::wrap(mvrnormArma(mean, variance));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rnormArma
+const double rnormArma(const double mean, const double sd);
+RcppExport SEXP _NNRCM_rnormArma(SEXP meanSEXP, SEXP sdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double >::type mean(meanSEXP);
+    Rcpp::traits::input_parameter< const double >::type sd(sdSEXP);
+    rcpp_result_gen = Rcpp::wrap(rnormArma(mean, sd));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mvnpdf
+const double mvnpdf(const arma::colvec x, const arma::colvec mean, const arma::mat sigma, const int n);
+RcppExport SEXP _NNRCM_mvnpdf(SEXP xSEXP, SEXP meanSEXP, SEXP sigmaSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const arma::colvec >::type mean(meanSEXP);
+    Rcpp::traits::input_parameter< const arma::mat >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(mvnpdf(x, mean, sigma, n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// alpha_sample
+double alpha_sample(double a_cur, double a_prior, double a_tuning, double n_obs, arma::cube C_inv, arma::colvec C_cond, int n_neighbors, arma::mat g, arma::mat C_vec, arma::colvec phi, arma::cube C_all, arma::Mat<int> W, arma::colvec w_cur);
+RcppExport SEXP _NNRCM_alpha_sample(SEXP a_curSEXP, SEXP a_priorSEXP, SEXP a_tuningSEXP, SEXP n_obsSEXP, SEXP C_invSEXP, SEXP C_condSEXP, SEXP n_neighborsSEXP, SEXP gSEXP, SEXP C_vecSEXP, SEXP phiSEXP, SEXP C_allSEXP, SEXP WSEXP, SEXP w_curSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type a_cur(a_curSEXP);
+    Rcpp::traits::input_parameter< double >::type a_prior(a_priorSEXP);
+    Rcpp::traits::input_parameter< double >::type a_tuning(a_tuningSEXP);
+    Rcpp::traits::input_parameter< double >::type n_obs(n_obsSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type C_inv(C_invSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type C_cond(C_condSEXP);
+    Rcpp::traits::input_parameter< int >::type n_neighbors(n_neighborsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type g(gSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type C_vec(C_vecSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type C_all(C_allSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type W(WSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type w_cur(w_curSEXP);
+    rcpp_result_gen = Rcpp::wrap(alpha_sample(a_cur, a_prior, a_tuning, n_obs, C_inv, C_cond, n_neighbors, g, C_vec, phi, C_all, W, w_cur));
+    return rcpp_result_gen;
+END_RCPP
+}
+// range_sample
+arma::cube range_sample(double nu_cur, double nu_tuning, arma::colvec nu_prior, double n_obs, arma::cube C_inv, arma::colvec C_cond, int n_neighbors, arma::mat g, arma::mat C_vec, arma::colvec phi, arma::cube C_all, double a, arma::cube D, double nugget, double kappa, arma::Mat<int> W, arma::colvec w_cur);
+RcppExport SEXP _NNRCM_range_sample(SEXP nu_curSEXP, SEXP nu_tuningSEXP, SEXP nu_priorSEXP, SEXP n_obsSEXP, SEXP C_invSEXP, SEXP C_condSEXP, SEXP n_neighborsSEXP, SEXP gSEXP, SEXP C_vecSEXP, SEXP phiSEXP, SEXP C_allSEXP, SEXP aSEXP, SEXP DSEXP, SEXP nuggetSEXP, SEXP kappaSEXP, SEXP WSEXP, SEXP w_curSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type nu_cur(nu_curSEXP);
+    Rcpp::traits::input_parameter< double >::type nu_tuning(nu_tuningSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type nu_prior(nu_priorSEXP);
+    Rcpp::traits::input_parameter< double >::type n_obs(n_obsSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type C_inv(C_invSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type C_cond(C_condSEXP);
+    Rcpp::traits::input_parameter< int >::type n_neighbors(n_neighborsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type g(gSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type C_vec(C_vecSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type C_all(C_allSEXP);
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type D(DSEXP);
+    Rcpp::traits::input_parameter< double >::type nugget(nuggetSEXP);
+    Rcpp::traits::input_parameter< double >::type kappa(kappaSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type W(WSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type w_cur(w_curSEXP);
+    rcpp_result_gen = Rcpp::wrap(range_sample(nu_cur, nu_tuning, nu_prior, n_obs, C_inv, C_cond, n_neighbors, g, C_vec, phi, C_all, a, D, nugget, kappa, W, w_cur));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sig_sample
+double sig_sample(arma::colvec sigma_prior, arma::Mat<int> W, arma::mat samples, double n_neighbors, double n_obs);
+RcppExport SEXP _NNRCM_sig_sample(SEXP sigma_priorSEXP, SEXP WSEXP, SEXP samplesSEXP, SEXP n_neighborsSEXP, SEXP n_obsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::colvec >::type sigma_prior(sigma_priorSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type W(WSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type samples(samplesSEXP);
+    Rcpp::traits::input_parameter< double >::type n_neighbors(n_neighborsSEXP);
+    Rcpp::traits::input_parameter< double >::type n_obs(n_obsSEXP);
+    rcpp_result_gen = Rcpp::wrap(sig_sample(sigma_prior, W, samples, n_neighbors, n_obs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// tau_sample
+double tau_sample(arma::colvec tau_prior, arma::colvec Y, arma::mat samples, arma::colvec beta, double n_obs);
+RcppExport SEXP _NNRCM_tau_sample(SEXP tau_priorSEXP, SEXP YSEXP, SEXP samplesSEXP, SEXP betaSEXP, SEXP n_obsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::colvec >::type tau_prior(tau_priorSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type samples(samplesSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type n_obs(n_obsSEXP);
+    rcpp_result_gen = Rcpp::wrap(tau_sample(tau_prior, Y, samples, beta, n_obs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// beta_sample
+arma::rowvec beta_sample(double beta_prior, arma::colvec Y, arma::colvec w, arma::mat X, double tau, int n_covariates);
+RcppExport SEXP _NNRCM_beta_sample(SEXP beta_priorSEXP, SEXP YSEXP, SEXP wSEXP, SEXP XSEXP, SEXP tauSEXP, SEXP n_covariatesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type beta_prior(beta_priorSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type w(wSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< int >::type n_covariates(n_covariatesSEXP);
+    rcpp_result_gen = Rcpp::wrap(beta_sample(beta_prior, Y, w, X, tau, n_covariates));
+    return rcpp_result_gen;
+END_RCPP
+}
 // phi_rcpp_arm
-double phi_rcpp_arm(double a, int x_m, double w, arma::colvec& w_neighbors, const arma::mat& solve_C, const arma::mat& cov_C, double cond_C, const arma::colvec& vec_C, int n_obs, const arma::rowvec& gammar, double tau, double y, double sig);
-RcppExport SEXP _spatialT2_phi_rcpp_arm(SEXP aSEXP, SEXP x_mSEXP, SEXP wSEXP, SEXP w_neighborsSEXP, SEXP solve_CSEXP, SEXP cov_CSEXP, SEXP cond_CSEXP, SEXP vec_CSEXP, SEXP n_obsSEXP, SEXP gammarSEXP, SEXP tauSEXP, SEXP ySEXP, SEXP sigSEXP) {
+double phi_rcpp_arm(double a, int x_m, double w, arma::colvec& w_neighbors, const arma::mat& solve_C, const arma::mat& cov_C, double cond_C, const arma::colvec& vec_C, int n_obs, const arma::rowvec& gammar, double sig);
+RcppExport SEXP _NNRCM_phi_rcpp_arm(SEXP aSEXP, SEXP x_mSEXP, SEXP wSEXP, SEXP w_neighborsSEXP, SEXP solve_CSEXP, SEXP cov_CSEXP, SEXP cond_CSEXP, SEXP vec_CSEXP, SEXP n_obsSEXP, SEXP gammarSEXP, SEXP sigSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -48,16 +182,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::colvec& >::type vec_C(vec_CSEXP);
     Rcpp::traits::input_parameter< int >::type n_obs(n_obsSEXP);
     Rcpp::traits::input_parameter< const arma::rowvec& >::type gammar(gammarSEXP);
-    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
-    Rcpp::traits::input_parameter< double >::type y(ySEXP);
     Rcpp::traits::input_parameter< double >::type sig(sigSEXP);
-    rcpp_result_gen = Rcpp::wrap(phi_rcpp_arm(a, x_m, w, w_neighbors, solve_C, cov_C, cond_C, vec_C, n_obs, gammar, tau, y, sig));
+    rcpp_result_gen = Rcpp::wrap(phi_rcpp_arm(a, x_m, w, w_neighbors, solve_C, cov_C, cond_C, vec_C, n_obs, gammar, sig));
     return rcpp_result_gen;
 END_RCPP
 }
 // w_rcpp_arm
-double w_rcpp_arm(arma::rowvec gammar, double phi, arma::colvec& w_neighbors, double y, double tau, double beta, double sig);
-RcppExport SEXP _spatialT2_w_rcpp_arm(SEXP gammarSEXP, SEXP phiSEXP, SEXP w_neighborsSEXP, SEXP ySEXP, SEXP tauSEXP, SEXP betaSEXP, SEXP sigSEXP) {
+double w_rcpp_arm(arma::rowvec gammar, double phi, arma::colvec& w_neighbors, double y, double tau, double beta, double sig, arma::colvec gamma_old, arma::colvec b_old, arma::colvec phi_old);
+RcppExport SEXP _NNRCM_w_rcpp_arm(SEXP gammarSEXP, SEXP phiSEXP, SEXP w_neighborsSEXP, SEXP ySEXP, SEXP tauSEXP, SEXP betaSEXP, SEXP sigSEXP, SEXP gamma_oldSEXP, SEXP b_oldSEXP, SEXP phi_oldSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -68,25 +200,42 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< double >::type sig(sigSEXP);
-    rcpp_result_gen = Rcpp::wrap(w_rcpp_arm(gammar, phi, w_neighbors, y, tau, beta, sig));
+    Rcpp::traits::input_parameter< arma::colvec >::type gamma_old(gamma_oldSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type b_old(b_oldSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type phi_old(phi_oldSEXP);
+    rcpp_result_gen = Rcpp::wrap(w_rcpp_arm(gammar, phi, w_neighbors, y, tau, beta, sig, gamma_old, b_old, phi_old));
     return rcpp_result_gen;
 END_RCPP
 }
-// mvrnormArma
-const arma::rowvec mvrnormArma(const arma::rowvec mean, const arma::mat variance);
-RcppExport SEXP _spatialT2_mvrnormArma(SEXP meanSEXP, SEXP varianceSEXP) {
+// mv_w_rcpp_arm
+double mv_w_rcpp_arm(arma::rowvec gammar, double phi, arma::colvec& w_neighbors, arma::colvec y, arma::colvec tau, double beta, arma::colvec gamma_old, arma::colvec b_old, arma::colvec phi_old, arma::Row<int> Yt, arma::colvec A_w, arma::colvec A_y, double w_old, double source, double other, double ix);
+RcppExport SEXP _NNRCM_mv_w_rcpp_arm(SEXP gammarSEXP, SEXP phiSEXP, SEXP w_neighborsSEXP, SEXP ySEXP, SEXP tauSEXP, SEXP betaSEXP, SEXP gamma_oldSEXP, SEXP b_oldSEXP, SEXP phi_oldSEXP, SEXP YtSEXP, SEXP A_wSEXP, SEXP A_ySEXP, SEXP w_oldSEXP, SEXP sourceSEXP, SEXP otherSEXP, SEXP ixSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::rowvec >::type mean(meanSEXP);
-    Rcpp::traits::input_parameter< const arma::mat >::type variance(varianceSEXP);
-    rcpp_result_gen = Rcpp::wrap(mvrnormArma(mean, variance));
+    Rcpp::traits::input_parameter< arma::rowvec >::type gammar(gammarSEXP);
+    Rcpp::traits::input_parameter< double >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::colvec& >::type w_neighbors(w_neighborsSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type gamma_old(gamma_oldSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type b_old(b_oldSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type phi_old(phi_oldSEXP);
+    Rcpp::traits::input_parameter< arma::Row<int> >::type Yt(YtSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type A_w(A_wSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type A_y(A_ySEXP);
+    Rcpp::traits::input_parameter< double >::type w_old(w_oldSEXP);
+    Rcpp::traits::input_parameter< double >::type source(sourceSEXP);
+    Rcpp::traits::input_parameter< double >::type other(otherSEXP);
+    Rcpp::traits::input_parameter< double >::type ix(ixSEXP);
+    rcpp_result_gen = Rcpp::wrap(mv_w_rcpp_arm(gammar, phi, w_neighbors, y, tau, beta, gamma_old, b_old, phi_old, Yt, A_w, A_y, w_old, source, other, ix));
     return rcpp_result_gen;
 END_RCPP
 }
 // gamma_rcpp_arm
 arma::rowvec gamma_rcpp_arm(double a, double n_obs, const arma::colvec& vec_C, const arma::mat& solve_C, const arma::mat& cov_C, double phi, arma::colvec& w_neighbors, double w, double sig);
-RcppExport SEXP _spatialT2_gamma_rcpp_arm(SEXP aSEXP, SEXP n_obsSEXP, SEXP vec_CSEXP, SEXP solve_CSEXP, SEXP cov_CSEXP, SEXP phiSEXP, SEXP w_neighborsSEXP, SEXP wSEXP, SEXP sigSEXP) {
+RcppExport SEXP _NNRCM_gamma_rcpp_arm(SEXP aSEXP, SEXP n_obsSEXP, SEXP vec_CSEXP, SEXP solve_CSEXP, SEXP cov_CSEXP, SEXP phiSEXP, SEXP w_neighborsSEXP, SEXP wSEXP, SEXP sigSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -103,9 +252,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// data_loop_rcpp_arm
-arma::mat data_loop_rcpp_arm(double a, double n_obs, Rcpp::NumericVector& D, arma::colvec w, int n_neighbors, arma::colvec m_location, arma::Mat<int> W, double tau, arma::colvec phi, arma::colvec y, double beta, double sig, double kappa, double nu);
-RcppExport SEXP _spatialT2_data_loop_rcpp_arm(SEXP aSEXP, SEXP n_obsSEXP, SEXP DSEXP, SEXP wSEXP, SEXP n_neighborsSEXP, SEXP m_locationSEXP, SEXP WSEXP, SEXP tauSEXP, SEXP phiSEXP, SEXP ySEXP, SEXP betaSEXP, SEXP sigSEXP, SEXP kappaSEXP, SEXP nuSEXP) {
+// mcmc_loop
+arma::cube mcmc_loop(double a, double n_obs, Rcpp::NumericVector& D, arma::colvec w, int n_neighbors, arma::colvec m_location, arma::Mat<int> W, double tau, arma::colvec phi, arma::mat gamma, arma::colvec y, arma::colvec beta, double sig, double kappa, double nu, arma::colvec tau_prior, arma::colvec sigma_prior, double beta_prior, int n_covariates, arma::mat X, int mcmc_samples, double nugget, double a_prior, double a_tuning, double nu_tuning, arma::colvec nu_prior, double nugget_tuning, arma::colvec nugget_prior, double a_nu_interval, arma::colvec neigh_count, arma::Mat<int> Wt, arma::Mat<int> Wt_ix);
+RcppExport SEXP _NNRCM_mcmc_loop(SEXP aSEXP, SEXP n_obsSEXP, SEXP DSEXP, SEXP wSEXP, SEXP n_neighborsSEXP, SEXP m_locationSEXP, SEXP WSEXP, SEXP tauSEXP, SEXP phiSEXP, SEXP gammaSEXP, SEXP ySEXP, SEXP betaSEXP, SEXP sigSEXP, SEXP kappaSEXP, SEXP nuSEXP, SEXP tau_priorSEXP, SEXP sigma_priorSEXP, SEXP beta_priorSEXP, SEXP n_covariatesSEXP, SEXP XSEXP, SEXP mcmc_samplesSEXP, SEXP nuggetSEXP, SEXP a_priorSEXP, SEXP a_tuningSEXP, SEXP nu_tuningSEXP, SEXP nu_priorSEXP, SEXP nugget_tuningSEXP, SEXP nugget_priorSEXP, SEXP a_nu_intervalSEXP, SEXP neigh_countSEXP, SEXP WtSEXP, SEXP Wt_ixSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -118,42 +267,175 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::Mat<int> >::type W(WSEXP);
     Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< arma::colvec >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type gamma(gammaSEXP);
     Rcpp::traits::input_parameter< arma::colvec >::type y(ySEXP);
-    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< double >::type sig(sigSEXP);
     Rcpp::traits::input_parameter< double >::type kappa(kappaSEXP);
     Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
-    rcpp_result_gen = Rcpp::wrap(data_loop_rcpp_arm(a, n_obs, D, w, n_neighbors, m_location, W, tau, phi, y, beta, sig, kappa, nu));
+    Rcpp::traits::input_parameter< arma::colvec >::type tau_prior(tau_priorSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type sigma_prior(sigma_priorSEXP);
+    Rcpp::traits::input_parameter< double >::type beta_prior(beta_priorSEXP);
+    Rcpp::traits::input_parameter< int >::type n_covariates(n_covariatesSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type mcmc_samples(mcmc_samplesSEXP);
+    Rcpp::traits::input_parameter< double >::type nugget(nuggetSEXP);
+    Rcpp::traits::input_parameter< double >::type a_prior(a_priorSEXP);
+    Rcpp::traits::input_parameter< double >::type a_tuning(a_tuningSEXP);
+    Rcpp::traits::input_parameter< double >::type nu_tuning(nu_tuningSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type nu_prior(nu_priorSEXP);
+    Rcpp::traits::input_parameter< double >::type nugget_tuning(nugget_tuningSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type nugget_prior(nugget_priorSEXP);
+    Rcpp::traits::input_parameter< double >::type a_nu_interval(a_nu_intervalSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type neigh_count(neigh_countSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type Wt(WtSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type Wt_ix(Wt_ixSEXP);
+    rcpp_result_gen = Rcpp::wrap(mcmc_loop(a, n_obs, D, w, n_neighbors, m_location, W, tau, phi, gamma, y, beta, sig, kappa, nu, tau_prior, sigma_prior, beta_prior, n_covariates, X, mcmc_samples, nugget, a_prior, a_tuning, nu_tuning, nu_prior, nugget_tuning, nugget_prior, a_nu_interval, neigh_count, Wt, Wt_ix));
     return rcpp_result_gen;
 END_RCPP
 }
-// data_loop_rcpp_no_nugget
-arma::mat data_loop_rcpp_no_nugget(double a, double n_obs, const Rcpp::List vec_C, Rcpp::List solve_C, Rcpp::List cov_C, arma::colvec& cond_C, int n_neighbors, const arma::colvec& m_location, const arma::Mat<int> W, double tau, const arma::colvec& phi, const arma::colvec y, double beta, double sig);
-RcppExport SEXP _spatialT2_data_loop_rcpp_no_nugget(SEXP aSEXP, SEXP n_obsSEXP, SEXP vec_CSEXP, SEXP solve_CSEXP, SEXP cov_CSEXP, SEXP cond_CSEXP, SEXP n_neighborsSEXP, SEXP m_locationSEXP, SEXP WSEXP, SEXP tauSEXP, SEXP phiSEXP, SEXP ySEXP, SEXP betaSEXP, SEXP sigSEXP) {
+// posterior_hierarchical_prediction
+arma::mat posterior_hierarchical_prediction(int n_neighbors, double n_pred, Rcpp::NumericVector& D, Rcpp::NumericVector& w_post, double a, double kappa, double nu, double nugget, arma::colvec sigma, arma::colvec tau_v, int mcmc_samples, double n_obs, arma::mat X, arma::mat beta);
+RcppExport SEXP _NNRCM_posterior_hierarchical_prediction(SEXP n_neighborsSEXP, SEXP n_predSEXP, SEXP DSEXP, SEXP w_postSEXP, SEXP aSEXP, SEXP kappaSEXP, SEXP nuSEXP, SEXP nuggetSEXP, SEXP sigmaSEXP, SEXP tau_vSEXP, SEXP mcmc_samplesSEXP, SEXP n_obsSEXP, SEXP XSEXP, SEXP betaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n_neighbors(n_neighborsSEXP);
+    Rcpp::traits::input_parameter< double >::type n_pred(n_predSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type D(DSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type w_post(w_postSEXP);
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< double >::type kappa(kappaSEXP);
+    Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
+    Rcpp::traits::input_parameter< double >::type nugget(nuggetSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type tau_v(tau_vSEXP);
+    Rcpp::traits::input_parameter< int >::type mcmc_samples(mcmc_samplesSEXP);
+    Rcpp::traits::input_parameter< double >::type n_obs(n_obsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type beta(betaSEXP);
+    rcpp_result_gen = Rcpp::wrap(posterior_hierarchical_prediction(n_neighbors, n_pred, D, w_post, a, kappa, nu, nugget, sigma, tau_v, mcmc_samples, n_obs, X, beta));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mv_range_sample
+arma::cube mv_range_sample(double nu_cur, double nu_tuning, arma::colvec nu_prior, double n_obs, arma::cube C_inv, arma::colvec C_cond, int n_neighbors, arma::mat g, arma::mat C_vec, arma::colvec phi, arma::cube C_all, double a, arma::cube D, arma::colvec nugget, arma::colvec kappa, arma::Mat<int> W, arma::colvec w_cur, arma::colvec sigma, arma::Mat<int> Wnb);
+RcppExport SEXP _NNRCM_mv_range_sample(SEXP nu_curSEXP, SEXP nu_tuningSEXP, SEXP nu_priorSEXP, SEXP n_obsSEXP, SEXP C_invSEXP, SEXP C_condSEXP, SEXP n_neighborsSEXP, SEXP gSEXP, SEXP C_vecSEXP, SEXP phiSEXP, SEXP C_allSEXP, SEXP aSEXP, SEXP DSEXP, SEXP nuggetSEXP, SEXP kappaSEXP, SEXP WSEXP, SEXP w_curSEXP, SEXP sigmaSEXP, SEXP WnbSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type nu_cur(nu_curSEXP);
+    Rcpp::traits::input_parameter< double >::type nu_tuning(nu_tuningSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type nu_prior(nu_priorSEXP);
+    Rcpp::traits::input_parameter< double >::type n_obs(n_obsSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type C_inv(C_invSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type C_cond(C_condSEXP);
+    Rcpp::traits::input_parameter< int >::type n_neighbors(n_neighborsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type g(gSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type C_vec(C_vecSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type C_all(C_allSEXP);
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type D(DSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type nugget(nuggetSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type kappa(kappaSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type W(WSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type w_cur(w_curSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type Wnb(WnbSEXP);
+    rcpp_result_gen = Rcpp::wrap(mv_range_sample(nu_cur, nu_tuning, nu_prior, n_obs, C_inv, C_cond, n_neighbors, g, C_vec, phi, C_all, a, D, nugget, kappa, W, w_cur, sigma, Wnb));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mv_tau_sample
+arma::colvec mv_tau_sample(arma::colvec tau_prior, arma::colvec Y, arma::mat samples, arma::colvec beta, arma::colvec y_1_ix, arma::colvec y_2_ix, arma::mat Aw);
+RcppExport SEXP _NNRCM_mv_tau_sample(SEXP tau_priorSEXP, SEXP YSEXP, SEXP samplesSEXP, SEXP betaSEXP, SEXP y_1_ixSEXP, SEXP y_2_ixSEXP, SEXP AwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::colvec >::type tau_prior(tau_priorSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type samples(samplesSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type y_1_ix(y_1_ixSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type y_2_ix(y_2_ixSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Aw(AwSEXP);
+    rcpp_result_gen = Rcpp::wrap(mv_tau_sample(tau_prior, Y, samples, beta, y_1_ix, y_2_ix, Aw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mv_mcmc_loop
+arma::mat mv_mcmc_loop(double a, double n_obs, Rcpp::NumericVector& D, arma::colvec w, int n_neighbors, arma::Mat<int> W, arma::colvec tau, arma::colvec phi, arma::mat gamma, arma::colvec y, arma::colvec beta, arma::colvec sig, arma::colvec kappa, double nu, arma::colvec tau_prior, double beta_prior, int n_covariates, arma::mat X, arma::mat Aw, int mcmc_samples, arma::colvec nugget, double a_prior, double a_tuning, double nu_tuning, arma::colvec nu_prior, double a_nu_interval, arma::colvec y1_ix, arma::colvec y2_ix, arma::Mat<int> Wnb, arma::colvec neigh_count, arma::Mat<int> Wt, arma::Mat<int> Wt_ix, arma::Mat<int> Yt);
+RcppExport SEXP _NNRCM_mv_mcmc_loop(SEXP aSEXP, SEXP n_obsSEXP, SEXP DSEXP, SEXP wSEXP, SEXP n_neighborsSEXP, SEXP WSEXP, SEXP tauSEXP, SEXP phiSEXP, SEXP gammaSEXP, SEXP ySEXP, SEXP betaSEXP, SEXP sigSEXP, SEXP kappaSEXP, SEXP nuSEXP, SEXP tau_priorSEXP, SEXP beta_priorSEXP, SEXP n_covariatesSEXP, SEXP XSEXP, SEXP AwSEXP, SEXP mcmc_samplesSEXP, SEXP nuggetSEXP, SEXP a_priorSEXP, SEXP a_tuningSEXP, SEXP nu_tuningSEXP, SEXP nu_priorSEXP, SEXP a_nu_intervalSEXP, SEXP y1_ixSEXP, SEXP y2_ixSEXP, SEXP WnbSEXP, SEXP neigh_countSEXP, SEXP WtSEXP, SEXP Wt_ixSEXP, SEXP YtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type a(aSEXP);
     Rcpp::traits::input_parameter< double >::type n_obs(n_obsSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::List >::type vec_C(vec_CSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type solve_C(solve_CSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type cov_C(cov_CSEXP);
-    Rcpp::traits::input_parameter< arma::colvec& >::type cond_C(cond_CSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type D(DSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type w(wSEXP);
     Rcpp::traits::input_parameter< int >::type n_neighbors(n_neighborsSEXP);
-    Rcpp::traits::input_parameter< const arma::colvec& >::type m_location(m_locationSEXP);
-    Rcpp::traits::input_parameter< const arma::Mat<int> >::type W(WSEXP);
-    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
-    Rcpp::traits::input_parameter< const arma::colvec& >::type phi(phiSEXP);
-    Rcpp::traits::input_parameter< const arma::colvec >::type y(ySEXP);
-    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< double >::type sig(sigSEXP);
-    rcpp_result_gen = Rcpp::wrap(data_loop_rcpp_no_nugget(a, n_obs, vec_C, solve_C, cov_C, cond_C, n_neighbors, m_location, W, tau, phi, y, beta, sig));
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type W(WSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type sig(sigSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type kappa(kappaSEXP);
+    Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type tau_prior(tau_priorSEXP);
+    Rcpp::traits::input_parameter< double >::type beta_prior(beta_priorSEXP);
+    Rcpp::traits::input_parameter< int >::type n_covariates(n_covariatesSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Aw(AwSEXP);
+    Rcpp::traits::input_parameter< int >::type mcmc_samples(mcmc_samplesSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type nugget(nuggetSEXP);
+    Rcpp::traits::input_parameter< double >::type a_prior(a_priorSEXP);
+    Rcpp::traits::input_parameter< double >::type a_tuning(a_tuningSEXP);
+    Rcpp::traits::input_parameter< double >::type nu_tuning(nu_tuningSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type nu_prior(nu_priorSEXP);
+    Rcpp::traits::input_parameter< double >::type a_nu_interval(a_nu_intervalSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type y1_ix(y1_ixSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type y2_ix(y2_ixSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type Wnb(WnbSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type neigh_count(neigh_countSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type Wt(WtSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type Wt_ix(Wt_ixSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type Yt(YtSEXP);
+    rcpp_result_gen = Rcpp::wrap(mv_mcmc_loop(a, n_obs, D, w, n_neighbors, W, tau, phi, gamma, y, beta, sig, kappa, nu, tau_prior, beta_prior, n_covariates, X, Aw, mcmc_samples, nugget, a_prior, a_tuning, nu_tuning, nu_prior, a_nu_interval, y1_ix, y2_ix, Wnb, neigh_count, Wt, Wt_ix, Yt));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mv_posterior_hierarchical_prediction
+arma::mat mv_posterior_hierarchical_prediction(int n_neighbors, double n_pred, Rcpp::NumericVector& D, Rcpp::NumericVector& w_post, double a, arma::colvec kappa, double nu, arma::colvec nugget, arma::colvec sigma, arma::mat tau_v, int mcmc_samples, double n_obs, arma::mat X, arma::mat beta, arma::Mat<int> Wnb, arma::mat Aw);
+RcppExport SEXP _NNRCM_mv_posterior_hierarchical_prediction(SEXP n_neighborsSEXP, SEXP n_predSEXP, SEXP DSEXP, SEXP w_postSEXP, SEXP aSEXP, SEXP kappaSEXP, SEXP nuSEXP, SEXP nuggetSEXP, SEXP sigmaSEXP, SEXP tau_vSEXP, SEXP mcmc_samplesSEXP, SEXP n_obsSEXP, SEXP XSEXP, SEXP betaSEXP, SEXP WnbSEXP, SEXP AwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n_neighbors(n_neighborsSEXP);
+    Rcpp::traits::input_parameter< double >::type n_pred(n_predSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type D(DSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type w_post(w_postSEXP);
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type kappa(kappaSEXP);
+    Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type nugget(nuggetSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type tau_v(tau_vSEXP);
+    Rcpp::traits::input_parameter< int >::type mcmc_samples(mcmc_samplesSEXP);
+    Rcpp::traits::input_parameter< double >::type n_obs(n_obsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type Wnb(WnbSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Aw(AwSEXP);
+    rcpp_result_gen = Rcpp::wrap(mv_posterior_hierarchical_prediction(n_neighbors, n_pred, D, w_post, a, kappa, nu, nugget, sigma, tau_v, mcmc_samples, n_obs, X, beta, Wnb, Aw));
     return rcpp_result_gen;
 END_RCPP
 }
 // posterior_marginal
 double posterior_marginal(int n_neighbors, double n_obs, Rcpp::NumericVector& D, Rcpp::NumericVector& Y_post, double a, double kappa, arma::colvec y, arma::Mat<int> W, double phi, double sigma, double tau, double small);
-RcppExport SEXP _spatialT2_posterior_marginal(SEXP n_neighborsSEXP, SEXP n_obsSEXP, SEXP DSEXP, SEXP Y_postSEXP, SEXP aSEXP, SEXP kappaSEXP, SEXP ySEXP, SEXP WSEXP, SEXP phiSEXP, SEXP sigmaSEXP, SEXP tauSEXP, SEXP smallSEXP) {
+RcppExport SEXP _NNRCM_posterior_marginal(SEXP n_neighborsSEXP, SEXP n_obsSEXP, SEXP DSEXP, SEXP Y_postSEXP, SEXP aSEXP, SEXP kappaSEXP, SEXP ySEXP, SEXP WSEXP, SEXP phiSEXP, SEXP sigmaSEXP, SEXP tauSEXP, SEXP smallSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -173,9 +455,114 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// posterior_marginal_prediction
+arma::mat posterior_marginal_prediction(int n_neighbors, double n_pred, Rcpp::NumericVector& D, Rcpp::NumericVector& Y_post, double a, double kappa, double nu, double sigma, double tau, int mcmc_samples, double n_obs);
+RcppExport SEXP _NNRCM_posterior_marginal_prediction(SEXP n_neighborsSEXP, SEXP n_predSEXP, SEXP DSEXP, SEXP Y_postSEXP, SEXP aSEXP, SEXP kappaSEXP, SEXP nuSEXP, SEXP sigmaSEXP, SEXP tauSEXP, SEXP mcmc_samplesSEXP, SEXP n_obsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n_neighbors(n_neighborsSEXP);
+    Rcpp::traits::input_parameter< double >::type n_pred(n_predSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type D(DSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type Y_post(Y_postSEXP);
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< double >::type kappa(kappaSEXP);
+    Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< int >::type mcmc_samples(mcmc_samplesSEXP);
+    Rcpp::traits::input_parameter< double >::type n_obs(n_obsSEXP);
+    rcpp_result_gen = Rcpp::wrap(posterior_marginal_prediction(n_neighbors, n_pred, D, Y_post, a, kappa, nu, sigma, tau, mcmc_samples, n_obs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mv_posterior_marginal_prediction
+arma::mat mv_posterior_marginal_prediction(int n_neighbors, double n_pred, Rcpp::NumericVector& D, Rcpp::NumericVector& Y_post, arma::colvec kappa, arma::colvec parameters, int mcmc_samples, double n_obs, arma::Mat<int> Wnb);
+RcppExport SEXP _NNRCM_mv_posterior_marginal_prediction(SEXP n_neighborsSEXP, SEXP n_predSEXP, SEXP DSEXP, SEXP Y_postSEXP, SEXP kappaSEXP, SEXP parametersSEXP, SEXP mcmc_samplesSEXP, SEXP n_obsSEXP, SEXP WnbSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n_neighbors(n_neighborsSEXP);
+    Rcpp::traits::input_parameter< double >::type n_pred(n_predSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type D(DSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type Y_post(Y_postSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type kappa(kappaSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type parameters(parametersSEXP);
+    Rcpp::traits::input_parameter< int >::type mcmc_samples(mcmc_samplesSEXP);
+    Rcpp::traits::input_parameter< double >::type n_obs(n_obsSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type Wnb(WnbSEXP);
+    rcpp_result_gen = Rcpp::wrap(mv_posterior_marginal_prediction(n_neighbors, n_pred, D, Y_post, kappa, parameters, mcmc_samples, n_obs, Wnb));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mv_posterior_marginal_prediction_coregionalization
+arma::mat mv_posterior_marginal_prediction_coregionalization(int n_neighbors, double n_pred, Rcpp::NumericVector& D, Rcpp::NumericVector& Y_post, arma::colvec kappa, arma::colvec parameters, int mcmc_samples, double n_obs, arma::Mat<int> Wnb);
+RcppExport SEXP _NNRCM_mv_posterior_marginal_prediction_coregionalization(SEXP n_neighborsSEXP, SEXP n_predSEXP, SEXP DSEXP, SEXP Y_postSEXP, SEXP kappaSEXP, SEXP parametersSEXP, SEXP mcmc_samplesSEXP, SEXP n_obsSEXP, SEXP WnbSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n_neighbors(n_neighborsSEXP);
+    Rcpp::traits::input_parameter< double >::type n_pred(n_predSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type D(DSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type Y_post(Y_postSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type kappa(kappaSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type parameters(parametersSEXP);
+    Rcpp::traits::input_parameter< int >::type mcmc_samples(mcmc_samplesSEXP);
+    Rcpp::traits::input_parameter< double >::type n_obs(n_obsSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type Wnb(WnbSEXP);
+    rcpp_result_gen = Rcpp::wrap(mv_posterior_marginal_prediction_coregionalization(n_neighbors, n_pred, D, Y_post, kappa, parameters, mcmc_samples, n_obs, Wnb));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mv_posterior_marginal
+double mv_posterior_marginal(int n_neighbors, double n_obs, Rcpp::NumericVector& D, Rcpp::NumericVector& Y_post, double a, arma::colvec kappa, arma::colvec y, arma::Mat<int> W, arma::Mat<int> Wnb, arma::colvec phi, arma::colvec sigma, arma::colvec tau, double small);
+RcppExport SEXP _NNRCM_mv_posterior_marginal(SEXP n_neighborsSEXP, SEXP n_obsSEXP, SEXP DSEXP, SEXP Y_postSEXP, SEXP aSEXP, SEXP kappaSEXP, SEXP ySEXP, SEXP WSEXP, SEXP WnbSEXP, SEXP phiSEXP, SEXP sigmaSEXP, SEXP tauSEXP, SEXP smallSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n_neighbors(n_neighborsSEXP);
+    Rcpp::traits::input_parameter< double >::type n_obs(n_obsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type D(DSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type Y_post(Y_postSEXP);
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type kappa(kappaSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type W(WSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type Wnb(WnbSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< double >::type small(smallSEXP);
+    rcpp_result_gen = Rcpp::wrap(mv_posterior_marginal(n_neighbors, n_obs, D, Y_post, a, kappa, y, W, Wnb, phi, sigma, tau, small));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mv_posterior_marginal_coregionalization
+double mv_posterior_marginal_coregionalization(int n_neighbors, double n_obs, Rcpp::NumericVector& D, Rcpp::NumericVector& Y_post, double a, arma::colvec kappa, arma::colvec y, arma::Mat<int> W, arma::Mat<int> Wnb, arma::colvec phi, arma::colvec A, arma::colvec tau, double small);
+RcppExport SEXP _NNRCM_mv_posterior_marginal_coregionalization(SEXP n_neighborsSEXP, SEXP n_obsSEXP, SEXP DSEXP, SEXP Y_postSEXP, SEXP aSEXP, SEXP kappaSEXP, SEXP ySEXP, SEXP WSEXP, SEXP WnbSEXP, SEXP phiSEXP, SEXP ASEXP, SEXP tauSEXP, SEXP smallSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n_neighbors(n_neighborsSEXP);
+    Rcpp::traits::input_parameter< double >::type n_obs(n_obsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type D(DSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type Y_post(Y_postSEXP);
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type kappa(kappaSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type W(WSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int> >::type Wnb(WnbSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type phi(phiSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type A(ASEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< double >::type small(smallSEXP);
+    rcpp_result_gen = Rcpp::wrap(mv_posterior_marginal_coregionalization(n_neighbors, n_obs, D, Y_post, a, kappa, y, W, Wnb, phi, A, tau, small));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpparma_hello_world
 arma::mat rcpparma_hello_world();
-RcppExport SEXP _spatialT2_rcpparma_hello_world() {
+RcppExport SEXP _NNRCM_rcpparma_hello_world() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -185,7 +572,7 @@ END_RCPP
 }
 // rcpparma_outerproduct
 arma::mat rcpparma_outerproduct(const arma::colvec& x);
-RcppExport SEXP _spatialT2_rcpparma_outerproduct(SEXP xSEXP) {
+RcppExport SEXP _NNRCM_rcpparma_outerproduct(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -196,7 +583,7 @@ END_RCPP
 }
 // rcpparma_innerproduct
 double rcpparma_innerproduct(const arma::colvec& x);
-RcppExport SEXP _spatialT2_rcpparma_innerproduct(SEXP xSEXP) {
+RcppExport SEXP _NNRCM_rcpparma_innerproduct(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -207,7 +594,7 @@ END_RCPP
 }
 // rcpparma_bothproducts
 Rcpp::List rcpparma_bothproducts(const arma::colvec& x);
-RcppExport SEXP _spatialT2_rcpparma_bothproducts(SEXP xSEXP) {
+RcppExport SEXP _NNRCM_rcpparma_bothproducts(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -218,23 +605,40 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_spatialT2_matern_cov", (DL_FUNC) &_spatialT2_matern_cov, 3},
-    {"_spatialT2_conditional_covariance", (DL_FUNC) &_spatialT2_conditional_covariance, 3},
-    {"_spatialT2_phi_rcpp_arm", (DL_FUNC) &_spatialT2_phi_rcpp_arm, 13},
-    {"_spatialT2_w_rcpp_arm", (DL_FUNC) &_spatialT2_w_rcpp_arm, 7},
-    {"_spatialT2_mvrnormArma", (DL_FUNC) &_spatialT2_mvrnormArma, 2},
-    {"_spatialT2_gamma_rcpp_arm", (DL_FUNC) &_spatialT2_gamma_rcpp_arm, 9},
-    {"_spatialT2_data_loop_rcpp_arm", (DL_FUNC) &_spatialT2_data_loop_rcpp_arm, 14},
-    {"_spatialT2_data_loop_rcpp_no_nugget", (DL_FUNC) &_spatialT2_data_loop_rcpp_no_nugget, 14},
-    {"_spatialT2_posterior_marginal", (DL_FUNC) &_spatialT2_posterior_marginal, 12},
-    {"_spatialT2_rcpparma_hello_world", (DL_FUNC) &_spatialT2_rcpparma_hello_world, 0},
-    {"_spatialT2_rcpparma_outerproduct", (DL_FUNC) &_spatialT2_rcpparma_outerproduct, 1},
-    {"_spatialT2_rcpparma_innerproduct", (DL_FUNC) &_spatialT2_rcpparma_innerproduct, 1},
-    {"_spatialT2_rcpparma_bothproducts", (DL_FUNC) &_spatialT2_rcpparma_bothproducts, 1},
+    {"_NNRCM_matern_cov", (DL_FUNC) &_NNRCM_matern_cov, 3},
+    {"_NNRCM_conditional_covariance", (DL_FUNC) &_NNRCM_conditional_covariance, 3},
+    {"_NNRCM_mvrnormArma", (DL_FUNC) &_NNRCM_mvrnormArma, 2},
+    {"_NNRCM_rnormArma", (DL_FUNC) &_NNRCM_rnormArma, 2},
+    {"_NNRCM_mvnpdf", (DL_FUNC) &_NNRCM_mvnpdf, 4},
+    {"_NNRCM_alpha_sample", (DL_FUNC) &_NNRCM_alpha_sample, 13},
+    {"_NNRCM_range_sample", (DL_FUNC) &_NNRCM_range_sample, 17},
+    {"_NNRCM_sig_sample", (DL_FUNC) &_NNRCM_sig_sample, 5},
+    {"_NNRCM_tau_sample", (DL_FUNC) &_NNRCM_tau_sample, 5},
+    {"_NNRCM_beta_sample", (DL_FUNC) &_NNRCM_beta_sample, 6},
+    {"_NNRCM_phi_rcpp_arm", (DL_FUNC) &_NNRCM_phi_rcpp_arm, 11},
+    {"_NNRCM_w_rcpp_arm", (DL_FUNC) &_NNRCM_w_rcpp_arm, 10},
+    {"_NNRCM_mv_w_rcpp_arm", (DL_FUNC) &_NNRCM_mv_w_rcpp_arm, 16},
+    {"_NNRCM_gamma_rcpp_arm", (DL_FUNC) &_NNRCM_gamma_rcpp_arm, 9},
+    {"_NNRCM_mcmc_loop", (DL_FUNC) &_NNRCM_mcmc_loop, 32},
+    {"_NNRCM_posterior_hierarchical_prediction", (DL_FUNC) &_NNRCM_posterior_hierarchical_prediction, 14},
+    {"_NNRCM_mv_range_sample", (DL_FUNC) &_NNRCM_mv_range_sample, 19},
+    {"_NNRCM_mv_tau_sample", (DL_FUNC) &_NNRCM_mv_tau_sample, 7},
+    {"_NNRCM_mv_mcmc_loop", (DL_FUNC) &_NNRCM_mv_mcmc_loop, 33},
+    {"_NNRCM_mv_posterior_hierarchical_prediction", (DL_FUNC) &_NNRCM_mv_posterior_hierarchical_prediction, 16},
+    {"_NNRCM_posterior_marginal", (DL_FUNC) &_NNRCM_posterior_marginal, 12},
+    {"_NNRCM_posterior_marginal_prediction", (DL_FUNC) &_NNRCM_posterior_marginal_prediction, 11},
+    {"_NNRCM_mv_posterior_marginal_prediction", (DL_FUNC) &_NNRCM_mv_posterior_marginal_prediction, 9},
+    {"_NNRCM_mv_posterior_marginal_prediction_coregionalization", (DL_FUNC) &_NNRCM_mv_posterior_marginal_prediction_coregionalization, 9},
+    {"_NNRCM_mv_posterior_marginal", (DL_FUNC) &_NNRCM_mv_posterior_marginal, 13},
+    {"_NNRCM_mv_posterior_marginal_coregionalization", (DL_FUNC) &_NNRCM_mv_posterior_marginal_coregionalization, 13},
+    {"_NNRCM_rcpparma_hello_world", (DL_FUNC) &_NNRCM_rcpparma_hello_world, 0},
+    {"_NNRCM_rcpparma_outerproduct", (DL_FUNC) &_NNRCM_rcpparma_outerproduct, 1},
+    {"_NNRCM_rcpparma_innerproduct", (DL_FUNC) &_NNRCM_rcpparma_innerproduct, 1},
+    {"_NNRCM_rcpparma_bothproducts", (DL_FUNC) &_NNRCM_rcpparma_bothproducts, 1},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_spatialT2(DllInfo *dll) {
+RcppExport void R_init_NNRCM(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

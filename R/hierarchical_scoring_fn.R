@@ -93,3 +93,52 @@ NIGP.GG <- function(Y, posterior.predictive.samples, k) {
   return(Dk.m)
 
 }
+
+#' Coverage scoring function
+#'
+#' This function computes the average coverage of the 95% predictive intervals.
+#'
+#' @param Y (vector) response value for our dataset
+#' @param posterior.predictive.samples (matrix) posterior predictive samples
+#'   associated with the response vector Y. The number of rows must correspond
+#'   to the length of the vector Y.
+#' @return (numeric) the function returns the average coverage for the sample
+#' @export
+NIGP.coverage <- function(Y, pp.samples) {
+  
+  ci.bounds <- cbind(apply(pp.samples, 1, function(x) quantile(x, p = 0.025)),
+                     apply(pp.samples, 1, function(x) quantile(x, p = 0.975)))
+  
+  coverage <- mean(Y >= ci.bounds[, 1] & Y <= ci.bounds[, 2])
+  
+  return(coverage)
+  
+}
+
+
+#' Scoring function
+#'
+#' This function computes the Gelfand & Ghosh (GG) score, the continuous ranked 
+#' probability score (CRPS), the predictive mean squared error (PMSE) value 
+#' and the coverage given the true observations and the posterior predictive samples.
+#'
+#' @param Y (vector) response value for our dataset
+#' @param posterior.predictive.samples (matrix) posterior predictive samples
+#'   associated with the response vector Y. The number of rows must correspond
+#'   to the length of the vector Y.
+#' @param k (numeric) nonnegative penalty term from GG criterion
+#' @return (numeric) the function returns the GG value for the specified penalty k
+#' @export
+NNRCM.scores <- function(Y, pp.samples, k = 1) {
+  
+  scores <- rep(0, 4)
+  
+  scores[1] <- NIGP.pmse(Y, pp.samples)
+  scores[2] <- NIGP.crps(Y, pp.samples)
+  scores[3] <- NIGP.GG(Y, pp.samples, k)
+  scores[4] <- NIGP.coverage(Y, pp.samples)
+  
+  names(scores) <- c("PMSE", "CRPS", "PPLC", "Coverage")
+  
+  return (scores)
+}

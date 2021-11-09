@@ -14,8 +14,7 @@
 #' 
 #' @param matrix.locations (matrix) observed locations (n.obs X 2)
 #' @param n.neighbors (integer) number of neighbors to include in N(s)
-#' @return (list) the function returns a list (n.obs X n.neighbors) of indexes to
-#'    indicate which observed location is a neighbor for each observed location 
+#' @return (list) the function returns the output of the spConjNNGP model
 create.W.neighbors.matrix.spConjNNGP <- function(matrix.locations, n.neighbors) {
   
   # Create fake data
@@ -30,51 +29,7 @@ create.W.neighbors.matrix.spConjNNGP <- function(matrix.locations, n.neighbors) 
                               n.omp.threads = 12,
                               return.neighbor.info = TRUE)
   
-  return(model$neighbor.info$n.indx)
-}
-
-#' neighbor matrix for observed locations
-#'
-#' creates matrix of neighbors for observations. The neighborhood of a location
-#' "s" must only contain locations with smaller indexes. That is, the order of
-#'  the rows of the data matrix matters.
-#'
-#' @param matrix.locations (matrix) observed locations (n.obs X 2)
-#' @param n.neighbors (integer) number of neighbors to include in N(s)
-#' @param fixed.neighbors (logical) set of 5 fixed neighbors for all locations
-#'    (default: FALSE)
-#' @return (matrix) the function returns a matrix (n.obs X n.neighbors) of indexes to
-#'    indicate which observed location is a neighbor for each observed location
-create.W.neighbors.matrix <- function(matrix.locations, n.neighbors,
-                                      fixed.neighbors = FALSE) {
-
-  n.obs <- dim(matrix.locations)[1]
-  W.neighbors <- matrix(0, nrow = n.obs, ncol = n.neighbors)
-
-  if (!fixed.neighbors) {
-    for(x in 2:n.obs){
-      if(x <= n.neighbors) {
-        W.neighbors[x, 1:(x- 1)] <- seq(1, x - 1)
-      } else {
-        x.dist <- fields::rdist(matrix.locations[x, ], matrix.locations[1:(x - 1), ])
-        lst.neighbors <- order(x.dist)[1:n.neighbors]
-        W.neighbors[x, ] <- sort(lst.neighbors)
-      }
-    }
-  } else {
-    for(x in 2:n.obs){
-      if(x <= n.neighbors) {
-        W.neighbors[x, 1:(x- 1)] <- seq(1, x - 1)
-      } else {
-        x.dist <- fields::rdist(matrix.locations[x, ], matrix.locations[6:(x - 1), ])
-        lst.neighbors <- order(x.dist)[1:(n.neighbors - 5)] + 5
-        W.neighbors[x, ] <- c(seq(1,5), sort(lst.neighbors))
-        
-      }
-    }
-  }
-
-  return(W.neighbors)
+  return(model)
 }
 
 #' neighbor matrix for predicted locations
@@ -88,25 +43,28 @@ create.W.neighbors.matrix <- function(matrix.locations, n.neighbors,
 #'    (default: FALSE)
 #' @return (matrix) the function returns a matrix (n.pred X n.obs) of logical to
 #'    indicate which observed location is a neighbor for each predicted location
-create.W.neighbors.predictive.matrix <- function(matrix.distance, n.neighbors,
-                                                 fixed.neighbors = FALSE) {
-  n.obs <- dim(matrix.distance)[2]
-  n.pred <- dim(matrix.distance)[1]
-  W.dist <- matrix.distance
-  W.neighbors <- matrix(0, nrow = n.pred, ncol = n.obs)
-
-  if(!fixed.neighbors) {
-    for(x in 1:n.pred){
-      lst.neighbors <- order(W.dist[x, ])[1:n.neighbors]
-      W.neighbors[x, lst.neighbors] <- rep(1, n.neighbors)
-    }
-  } else {
-    for(x in 1:n.pred){
-      lst.neighbors <- c(seq(1, 5), order(W.dist[x, 6:n.obs])[1:(n.neighbors - 5)] + 5)
-      W.neighbors[x, lst.neighbors] <- rep(1, n.neighbors)
-    }
+create.W.neighbors.predictive.matrix <- function(Y,
+                                                 observed.locations, 
+                                                 predicted.locations,
+                                                 n.neighbors) {
+  # Create the output matrices 
+  n.pred <- dim(predicted.locations)[1]
+  D.array <- array(0, dim = c(n.neighbors + 1, n.neighbors + 1, n.pred))
+  Y.array <- array(0, dim = c(n.pred, n.neighbors))
+  W.array <- matrix(0, nrow = n.pred, ncol = n.neighbors)
+  
+  # Fill out the indexes
+  for(x in 1:n.pred){
+    x.dist <- fields::rdist(predicted.locations[x, ], observed.locations)
+    lst.neighbors <- order(x.dist)[1:n.neighbors]
+    D.array[, , x] <- fields::rdist(rbind(predicted.locations[x, ],
+                                          observed.locations[lst.neighbors, ]),
+                                    rbind(predicted.locations[x, ],
+                                          observed.locations[lst.neighbors, ]))
+    Y.array[x, ] <- Y[lst.neighbors]
+    W.array[x, ] <- lst.neighbors
   }
-
-  return(W.neighbors)
+  
+  return(list(D.array, Y.array, W.array))
 }
 

@@ -2,54 +2,122 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 matern_cov <- function(distance, kappa, phi) {
-    .Call(`_spatialT2_matern_cov`, distance, kappa, phi)
+    .Call(`_NNRCM_matern_cov`, distance, kappa, phi)
 }
 
 conditional_covariance <- function(C, vec_C, C_i) {
-    .Call(`_spatialT2_conditional_covariance`, C, vec_C, C_i)
-}
-
-phi_rcpp_arm <- function(a, x_m, w, w_neighbors, solve_C, cov_C, cond_C, vec_C, n_obs, gammar, tau, y, sig) {
-    .Call(`_spatialT2_phi_rcpp_arm`, a, x_m, w, w_neighbors, solve_C, cov_C, cond_C, vec_C, n_obs, gammar, tau, y, sig)
-}
-
-w_rcpp_arm <- function(gammar, phi, w_neighbors, y, tau, beta, sig) {
-    .Call(`_spatialT2_w_rcpp_arm`, gammar, phi, w_neighbors, y, tau, beta, sig)
+    .Call(`_NNRCM_conditional_covariance`, C, vec_C, C_i)
 }
 
 mvrnormArma <- function(mean, variance) {
-    .Call(`_spatialT2_mvrnormArma`, mean, variance)
+    .Call(`_NNRCM_mvrnormArma`, mean, variance)
+}
+
+rnormArma <- function(mean, sd) {
+    .Call(`_NNRCM_rnormArma`, mean, sd)
+}
+
+mvnpdf <- function(x, mean, sigma, n) {
+    .Call(`_NNRCM_mvnpdf`, x, mean, sigma, n)
+}
+
+alpha_sample <- function(a_cur, a_prior, a_tuning, n_obs, C_inv, C_cond, n_neighbors, g, C_vec, phi, C_all, W, w_cur) {
+    .Call(`_NNRCM_alpha_sample`, a_cur, a_prior, a_tuning, n_obs, C_inv, C_cond, n_neighbors, g, C_vec, phi, C_all, W, w_cur)
+}
+
+range_sample <- function(nu_cur, nu_tuning, nu_prior, n_obs, C_inv, C_cond, n_neighbors, g, C_vec, phi, C_all, a, D, nugget, kappa, W, w_cur) {
+    .Call(`_NNRCM_range_sample`, nu_cur, nu_tuning, nu_prior, n_obs, C_inv, C_cond, n_neighbors, g, C_vec, phi, C_all, a, D, nugget, kappa, W, w_cur)
+}
+
+sig_sample <- function(sigma_prior, W, samples, n_neighbors, n_obs) {
+    .Call(`_NNRCM_sig_sample`, sigma_prior, W, samples, n_neighbors, n_obs)
+}
+
+tau_sample <- function(tau_prior, Y, samples, beta, n_obs) {
+    .Call(`_NNRCM_tau_sample`, tau_prior, Y, samples, beta, n_obs)
+}
+
+beta_sample <- function(beta_prior, Y, w, X, tau, n_covariates) {
+    .Call(`_NNRCM_beta_sample`, beta_prior, Y, w, X, tau, n_covariates)
+}
+
+phi_rcpp_arm <- function(a, x_m, w, w_neighbors, solve_C, cov_C, cond_C, vec_C, n_obs, gammar, sig) {
+    .Call(`_NNRCM_phi_rcpp_arm`, a, x_m, w, w_neighbors, solve_C, cov_C, cond_C, vec_C, n_obs, gammar, sig)
+}
+
+w_rcpp_arm <- function(gammar, phi, w_neighbors, y, tau, beta, sig, gamma_old, b_old, phi_old) {
+    .Call(`_NNRCM_w_rcpp_arm`, gammar, phi, w_neighbors, y, tau, beta, sig, gamma_old, b_old, phi_old)
+}
+
+mv_w_rcpp_arm <- function(gammar, phi, w_neighbors, y, tau, beta, gamma_old, b_old, phi_old, Yt, A_w, A_y, w_old, source, other, ix) {
+    .Call(`_NNRCM_mv_w_rcpp_arm`, gammar, phi, w_neighbors, y, tau, beta, gamma_old, b_old, phi_old, Yt, A_w, A_y, w_old, source, other, ix)
 }
 
 gamma_rcpp_arm <- function(a, n_obs, vec_C, solve_C, cov_C, phi, w_neighbors, w, sig) {
-    .Call(`_spatialT2_gamma_rcpp_arm`, a, n_obs, vec_C, solve_C, cov_C, phi, w_neighbors, w, sig)
+    .Call(`_NNRCM_gamma_rcpp_arm`, a, n_obs, vec_C, solve_C, cov_C, phi, w_neighbors, w, sig)
 }
 
-data_loop_rcpp_arm <- function(a, n_obs, D, w, n_neighbors, m_location, W, tau, phi, y, beta, sig, kappa, nu) {
-    .Call(`_spatialT2_data_loop_rcpp_arm`, a, n_obs, D, w, n_neighbors, m_location, W, tau, phi, y, beta, sig, kappa, nu)
+mcmc_loop <- function(a, n_obs, D, w, n_neighbors, m_location, W, tau, phi, gamma, y, beta, sig, kappa, nu, tau_prior, sigma_prior, beta_prior, n_covariates, X, mcmc_samples, nugget, a_prior, a_tuning, nu_tuning, nu_prior, nugget_tuning, nugget_prior, a_nu_interval, neigh_count, Wt, Wt_ix) {
+    .Call(`_NNRCM_mcmc_loop`, a, n_obs, D, w, n_neighbors, m_location, W, tau, phi, gamma, y, beta, sig, kappa, nu, tau_prior, sigma_prior, beta_prior, n_covariates, X, mcmc_samples, nugget, a_prior, a_tuning, nu_tuning, nu_prior, nugget_tuning, nugget_prior, a_nu_interval, neigh_count, Wt, Wt_ix)
 }
 
-data_loop_rcpp_no_nugget <- function(a, n_obs, vec_C, solve_C, cov_C, cond_C, n_neighbors, m_location, W, tau, phi, y, beta, sig) {
-    .Call(`_spatialT2_data_loop_rcpp_no_nugget`, a, n_obs, vec_C, solve_C, cov_C, cond_C, n_neighbors, m_location, W, tau, phi, y, beta, sig)
+posterior_hierarchical_prediction <- function(n_neighbors, n_pred, D, w_post, a, kappa, nu, nugget, sigma, tau_v, mcmc_samples, n_obs, X, beta) {
+    .Call(`_NNRCM_posterior_hierarchical_prediction`, n_neighbors, n_pred, D, w_post, a, kappa, nu, nugget, sigma, tau_v, mcmc_samples, n_obs, X, beta)
+}
+
+mv_range_sample <- function(nu_cur, nu_tuning, nu_prior, n_obs, C_inv, C_cond, n_neighbors, g, C_vec, phi, C_all, a, D, nugget, kappa, W, w_cur, sigma, Wnb) {
+    .Call(`_NNRCM_mv_range_sample`, nu_cur, nu_tuning, nu_prior, n_obs, C_inv, C_cond, n_neighbors, g, C_vec, phi, C_all, a, D, nugget, kappa, W, w_cur, sigma, Wnb)
+}
+
+mv_tau_sample <- function(tau_prior, Y, samples, beta, y_1_ix, y_2_ix, Aw) {
+    .Call(`_NNRCM_mv_tau_sample`, tau_prior, Y, samples, beta, y_1_ix, y_2_ix, Aw)
+}
+
+mv_mcmc_loop <- function(a, n_obs, D, w, n_neighbors, W, tau, phi, gamma, y, beta, sig, kappa, nu, tau_prior, beta_prior, n_covariates, X, Aw, mcmc_samples, nugget, a_prior, a_tuning, nu_tuning, nu_prior, a_nu_interval, y1_ix, y2_ix, Wnb, neigh_count, Wt, Wt_ix, Yt) {
+    .Call(`_NNRCM_mv_mcmc_loop`, a, n_obs, D, w, n_neighbors, W, tau, phi, gamma, y, beta, sig, kappa, nu, tau_prior, beta_prior, n_covariates, X, Aw, mcmc_samples, nugget, a_prior, a_tuning, nu_tuning, nu_prior, a_nu_interval, y1_ix, y2_ix, Wnb, neigh_count, Wt, Wt_ix, Yt)
+}
+
+mv_posterior_hierarchical_prediction <- function(n_neighbors, n_pred, D, w_post, a, kappa, nu, nugget, sigma, tau_v, mcmc_samples, n_obs, X, beta, Wnb, Aw) {
+    .Call(`_NNRCM_mv_posterior_hierarchical_prediction`, n_neighbors, n_pred, D, w_post, a, kappa, nu, nugget, sigma, tau_v, mcmc_samples, n_obs, X, beta, Wnb, Aw)
 }
 
 posterior_marginal <- function(n_neighbors, n_obs, D, Y_post, a, kappa, y, W, phi, sigma, tau, small) {
-    .Call(`_spatialT2_posterior_marginal`, n_neighbors, n_obs, D, Y_post, a, kappa, y, W, phi, sigma, tau, small)
+    .Call(`_NNRCM_posterior_marginal`, n_neighbors, n_obs, D, Y_post, a, kappa, y, W, phi, sigma, tau, small)
+}
+
+posterior_marginal_prediction <- function(n_neighbors, n_pred, D, Y_post, a, kappa, nu, sigma, tau, mcmc_samples, n_obs) {
+    .Call(`_NNRCM_posterior_marginal_prediction`, n_neighbors, n_pred, D, Y_post, a, kappa, nu, sigma, tau, mcmc_samples, n_obs)
+}
+
+mv_posterior_marginal_prediction <- function(n_neighbors, n_pred, D, Y_post, kappa, parameters, mcmc_samples, n_obs, Wnb) {
+    .Call(`_NNRCM_mv_posterior_marginal_prediction`, n_neighbors, n_pred, D, Y_post, kappa, parameters, mcmc_samples, n_obs, Wnb)
+}
+
+mv_posterior_marginal_prediction_coregionalization <- function(n_neighbors, n_pred, D, Y_post, kappa, parameters, mcmc_samples, n_obs, Wnb) {
+    .Call(`_NNRCM_mv_posterior_marginal_prediction_coregionalization`, n_neighbors, n_pred, D, Y_post, kappa, parameters, mcmc_samples, n_obs, Wnb)
+}
+
+mv_posterior_marginal <- function(n_neighbors, n_obs, D, Y_post, a, kappa, y, W, Wnb, phi, sigma, tau, small) {
+    .Call(`_NNRCM_mv_posterior_marginal`, n_neighbors, n_obs, D, Y_post, a, kappa, y, W, Wnb, phi, sigma, tau, small)
+}
+
+mv_posterior_marginal_coregionalization <- function(n_neighbors, n_obs, D, Y_post, a, kappa, y, W, Wnb, phi, A, tau, small) {
+    .Call(`_NNRCM_mv_posterior_marginal_coregionalization`, n_neighbors, n_obs, D, Y_post, a, kappa, y, W, Wnb, phi, A, tau, small)
 }
 
 rcpparma_hello_world <- function() {
-    .Call(`_spatialT2_rcpparma_hello_world`)
+    .Call(`_NNRCM_rcpparma_hello_world`)
 }
 
 rcpparma_outerproduct <- function(x) {
-    .Call(`_spatialT2_rcpparma_outerproduct`, x)
+    .Call(`_NNRCM_rcpparma_outerproduct`, x)
 }
 
 rcpparma_innerproduct <- function(x) {
-    .Call(`_spatialT2_rcpparma_innerproduct`, x)
+    .Call(`_NNRCM_rcpparma_innerproduct`, x)
 }
 
 rcpparma_bothproducts <- function(x) {
-    .Call(`_spatialT2_rcpparma_bothproducts`, x)
+    .Call(`_NNRCM_rcpparma_bothproducts`, x)
 }
 

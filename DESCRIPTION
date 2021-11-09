@@ -1,8 +1,9 @@
-Package: spatialT2
+Package: NNRCM
 Type: Package
-Title: Spatial inference and predictions using the univariate and multivariate Spatial-T model.
+Title: Spatial inference and predictions using the univariate and bivariate nearest-neighbor
+    gaussian process with random covariance matrix (NN-RCM).
 Version: 1.0
-Date: 2021-05-26
+Date: 2021-11-09
 Authors@R: 
     person(given = "Isabelle",
            family = "Grenier",
@@ -10,14 +11,15 @@ Authors@R:
            email = "igrenier@ucsc.edu",
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Maintainer: Isabelle Grenier <igrenier@ucsc.edu>
-Description: This package implements the non-isotropic spatial model Spatial-T?
-    Both the univariate and multivariate versions are available. The package
+Description: This package implements the non-stationary and non-isotropic spatial 
+    model NN-RCM. Both the univariate and bivariate versions are available. The package
     allows for the MCMC version as well as the marginal maximization version
     which is faster for large spatial datasets.
 License: GPL (>= 2)
 Imports: Rcpp (>= 1.0.5), spNNGP (>= 0.1.5), RcppArmadillo, RcppParallel, dplyr,
-    fields, ggplot2, RandomFields, geoR, MASS, spBayes, MCMCpack, RConics, doParallel
-LinkingTo: Rcpp, RcppArmadillo, RcppParallel
+    fields, ggplot2, RandomFields, geoR, MASS, spBayes, MCMCpack, RConics, doParallel,
+    mvtnorm
+LinkingTo: Rcpp, RcppArmadillo, RcppParallel, BH
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
