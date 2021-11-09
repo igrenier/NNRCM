@@ -1,24 +1,24 @@
-\name{spatialT2-package}
-\alias{spatialT2-package}
-\alias{spatialT2}
+\name{NNRCM-package}
+\alias{NNRCM-package}
+\alias{NNRCM}
 \docType{package}
 \title{
-\packageTitle{spatialT2}
+\packageTitle{NNRCM}
 }
 \description{
-\packageDescription{spatialT2}
+\packageDescription{NNRCM}
 }
 \details{
 
 The DESCRIPTION file:
-\packageDESCRIPTION{spatialT2}
-\packageIndices{spatialT2}
+\packageDESCRIPTION{NNRCM}
+\packageIndices{NNRCM}
 ~~ An overview of how to use the package, including the most important functions ~~
 }
 \author{
-\packageAuthor{spatialT2}
+\packageAuthor{NNRCM}
 
-Maintainer: \packageMaintainer{spatialT2}
+Maintainer: \packageMaintainer{NNRCM}
 }
 \references{
 ~~ Literature or other references for background information ~~
