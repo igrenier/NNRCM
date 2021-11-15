@@ -224,7 +224,7 @@ optim.results.sp <-
 
 # posterior predictive sampling of the testing set
 posterior.predictive.marginal <- 
-  mv.NNRCM.posterior.predictive(Y = training.y.bv, 
+  NNRCM.bv.marginal.predict(Y = training.y.bv, 
                             observed.locations = training.locations, 
                             predicted.locations = testing.locations, 
                             point.estimates = optim.results$par,

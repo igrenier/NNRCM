@@ -488,7 +488,7 @@ NNRCM.bv.marginal.infer <- function(Y, observed.locations,
 #' @param alpha (numeric) degrees of freedom of the Wishart distribution
 #' @return (list) the function returns a list with the output from the R::optim function
 #' @export
-mv.NNRCM.posterior.predictive <- function(Y, observed.locations, predicted.locations,
+NNRCM.bv.marginal.predict <- function(Y, observed.locations, predicted.locations,
                                       point.estimates, n.sim = 1000, n.neighbors = 10,
                                       smoothness, coregionalization = FALSE, parsimonious  = TRUE) {
   
