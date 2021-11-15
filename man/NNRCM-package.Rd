@@ -33,4 +33,3 @@ Maintainer: \packageMaintainer{NNRCM}
 \examples{
 ~~ simple examples of the most important functions ~~
 }
->>>>>>> 3b936b19d828a1d798cf443b6d569bea5871d8c3:man/spatialT2-package.Rd
