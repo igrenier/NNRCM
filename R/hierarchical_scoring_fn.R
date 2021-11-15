@@ -16,7 +16,7 @@
 #'   associated with the response vector Y. The number of rows must correspond
 #'   to the length of the vector Y.
 #' @return (numeric) the function returns the crps value
-#' @export
+
 NIGP.crps <- function(Y, posterior.predictive.samples) {
 
   n.obs <- length(Y)
@@ -51,7 +51,7 @@ NIGP.crps <- function(Y, posterior.predictive.samples) {
 #'   associated with the response vector Y. The number of rows must correspond
 #'   to the length of the vector Y.
 #' @return (numeric) the function returns the pmse value
-#' @export
+
 NIGP.pmse <- function(Y, posterior.predictive.samples) {
 
   n.obs <- length(Y)
@@ -78,7 +78,7 @@ NIGP.pmse <- function(Y, posterior.predictive.samples) {
 #'   to the length of the vector Y.
 #' @param k (numeric) nonnegative penalty term from GG criterion
 #' @return (numeric) the function returns the GG value for the specified penalty k
-#' @export
+
 NIGP.GG <- function(Y, posterior.predictive.samples, k) {
 
   # term 1: within sample variance
@@ -103,7 +103,7 @@ NIGP.GG <- function(Y, posterior.predictive.samples, k) {
 #'   associated with the response vector Y. The number of rows must correspond
 #'   to the length of the vector Y.
 #' @return (numeric) the function returns the average coverage for the sample
-#' @export
+
 NIGP.coverage <- function(Y, pp.samples) {
   
   ci.bounds <- cbind(apply(pp.samples, 1, function(x) quantile(x, p = 0.025)),

@@ -6,6 +6,7 @@
 #'
 #' =============================================================================
 
+#' @export
 NNRCM.hierarchical.predict <- function(Y, X, 
                                               observed.locations, 
                                               predicted.locations,
@@ -70,6 +71,7 @@ NNRCM.hierarchical.predict <- function(Y, X,
   return(y.pred)
 }
 
+#' @export
 NNRCM.bv.hierarchical.predict <- function(Y, X = 0, A = diag(2), kappa,
                                               observed.locations, predicted.locations,
                                               posterior.samples, 
