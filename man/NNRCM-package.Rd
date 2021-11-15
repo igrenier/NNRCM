@@ -1,4 +1,3 @@
-<<<<<<< HEAD:man/NNRCM-package.Rd
 \name{NNRCM-package}
 \alias{NNRCM-package}
 \alias{NNRCM}
