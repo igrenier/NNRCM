@@ -1,4 +1,4 @@
-# Vignette code:
+# Vignette libraries:
 library(NNRCM)
 library(fields)
 library(MASS)
