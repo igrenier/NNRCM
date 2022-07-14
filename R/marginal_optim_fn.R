@@ -81,7 +81,7 @@ NNRCM.marginal.infer <- function(Y, observed.locations, smoothness,
   for(i in 2:(m+1)) {
     W[i, 1:(i-1)] <- seq(1, i - 1) 
   }
-  W[(m+2):n.obs, ] <- matrix(unlist(W.list)[(m * (m+1) / 2 + 2) : ((n.obs - m - 1) * m + m * (m+1) / 2 + 1)], ncol = 10, byrow = TRUE)
+  W[(m+2):n.obs, ] <- matrix(unlist(W.list)[(m * (m+1) / 2 + 2) : ((n.obs - m - 1) * m + m * (m+1) / 2 + 1)], ncol = m, byrow = TRUE)
   W <- cbind(1:n.obs, W)
   
   print("Neighbor structure retrieved")
