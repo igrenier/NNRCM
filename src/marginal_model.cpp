@@ -149,7 +149,8 @@ struct mv_marginal_predictive : public Worker {
 double posterior_marginal(int n_neighbors, double n_obs, Rcpp::NumericVector& D,
                           Rcpp::NumericVector& Y_post, double a, double kappa, 
                          arma::colvec y, arma::Mat<int> W,
-                         double phi, double sigma, double tau, double small) {
+                         double phi, double sigma, double tau, double small 
+                         double a_sig double b_sig double a_tau double b_tau) {
 
   // Create cubes
   arma::cube cube_D = Rcpp::as<arma::cube>(D);
@@ -183,8 +184,8 @@ double posterior_marginal(int n_neighbors, double n_obs, Rcpp::NumericVector& D,
   double marginal = marginal_likelihood.tmp_marginal;
   
   // compute log prior
-  double prior = log(phi) - 2 * phi / small - 4 * log(sigma) - 2 / sigma - 
-      4 * log(tau) - 2 / tau - 2 * log(a);
+  double prior = log(phi) - 2 * phi / small - (a_sig + 1) * log(sigma) - (b_sig + 1) / sigma - 
+      (a_tau + 1) * log(tau) - (b_tau + 1) / tau - 2 * log(a);
       
   // compute normalizing constant
   // double constant = n_obs * (1 / 2 * log((a - n_obs + n_neighbors + 2) / 2 - 1) - 1 / 2 * log(M_PI));
