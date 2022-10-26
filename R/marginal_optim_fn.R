@@ -33,8 +33,8 @@ marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, 
   # Name the parameters for ease of understanding
   alpha <- as.numeric(pars[1])
   sig <- as.numeric(pars[2])
-  nu <- as.numeric(pars[3])
-  xi <- as.numeric(pars[4])
+  phi <- as.numeric(pars[3])
+  tau <- as.numeric(pars[4])
   
   # Set Value for prior parameters of sigma^2 and tau^2
   if(is.null(prior.list)){
@@ -46,8 +46,9 @@ marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, 
   
   # try coding it using rcpp:
   marginal <- posterior_marginal(m, n.obs, D, Y_post,
-                                 alpha, kappa, Y, W, nu, 
-                                 sig, xi, smallest.distance)
+                                 alpha, kappa, Y, W, phi, 
+                                 sig, tau, smallest.distance,
+                                a_sig, b_sig, a_tau, b_tau)
   
   return(marginal)
 }
@@ -140,7 +141,7 @@ NNRCM.marginal.infer <- function(Y, observed.locations, smoothness,
 #' @param observed.locations (matrix) observed locations (n.obs X 2)
 #' @param predicted.locations (matrix) predicted locations (n.pred X 2)
 #' @param optim.pars (vector) vector of length four in the following order: 
-#'   alpha, sigma, nu, xi
+#'   alpha, sigma, phi, tau
 #' @param smoothness (numeric) smoothness parameter for the Matern covariance function
 #' @param n.neighbors (integer) number of neighbors to include in N(s) (default: 10)
 #' @param n.sim (integer) prediction sample size to output (default: 1000)
