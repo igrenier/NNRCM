@@ -26,15 +26,24 @@
 #' @return (numeric) the function computes and returns the value of the
 #'                   posterior marginal likelihood for a given set of parameters
 marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, n.obs, 
-                                      m, kappa) {
+                                      m, kappa, 
+                                      prior.list = NULL
+                                     ) {
 
   # Name the parameters for ease of understanding
   alpha <- as.numeric(pars[1])
   sig <- as.numeric(pars[2])
   nu <- as.numeric(pars[3])
   xi <- as.numeric(pars[4])
-
-
+  
+  # Set Value for prior parameters of sigma^2 and tau^2
+  if(is.null(prior.list)){
+    prior.list <- list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2)}
+  a_sig <- prior.list$a_sig
+  b_sig <- prior.list$b_sig
+  a_tau <- prior.list$a_tau
+  b_tau <- prior.list$b_tau
+  
   # try coding it using rcpp:
   marginal <- posterior_marginal(m, n.obs, D, Y_post,
                                  alpha, kappa, Y, W, nu, 
