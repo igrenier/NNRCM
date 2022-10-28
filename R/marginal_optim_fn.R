@@ -199,6 +199,7 @@ NNRCM.marginal.predict <- function(Y, observed.locations, predicted.locations,
 #' @param kappa (numeric) smoothness parameter for the Matern covariance function
 #' @return (numeric) the function computes and returns the value of the
 #'                   posterior marginal likelihood for a given set of parameters
+#' @export                   
 mv.marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, Wnb, n.obs, 
                                          m, kappa, cov.family, parsimonious , 
                                          coregionalization) {

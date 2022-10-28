@@ -89,6 +89,7 @@ ggplot2::ggplot(predicted.df, aes(x = x, y = y, fill = z)) +
   scale_fill_gradient2(low = "red", mid = "white", high = "blue", 
                        midpoint = 0, space = "Lab", na.value = "grey50", 
                        guide = "colourbar", aesthetics = "fill")
+ggsave("vignette-uv-marginal-predictions.pdf", width = 6, height = 5, units='in')
 
 # ==============================================================================
 # Univariate Hierarchical Model

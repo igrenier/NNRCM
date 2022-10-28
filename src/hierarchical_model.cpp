@@ -92,7 +92,8 @@ struct hierarchical_predictive : public Worker {
       for (int i=0; i<tmp_mcmc_samples; i++) {
         double y_star_mean = new_w(i) + dot(tmp_X.row(x), tmp_beta.col(i));
         double y_star_sd = std::sqrt(tmp_tau_array(i));
-        tmp_y_star(x, i) = rnormArma(y_star_mean, y_star_sd);
+        // tmp_y_star(x, i) = rnormArma(y_star_mean, y_star_sd);
+        tmp_y_star(x, i) = y_star_mean;
       }
       
     }
