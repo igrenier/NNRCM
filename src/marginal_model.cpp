@@ -149,8 +149,8 @@ struct mv_marginal_predictive : public Worker {
 double posterior_marginal(int n_neighbors, double n_obs, Rcpp::NumericVector& D,
                           Rcpp::NumericVector& Y_post, double a, double kappa, 
                          arma::colvec y, arma::Mat<int> W,
-                         double phi, double sigma, double tau, double small 
-                         double a_sig double b_sig double a_tau double b_tau) {
+                         double phi, double sigma, double tau, double small, 
+                         double a_sig, double b_sig, double a_tau, double b_tau) {
 
   // Create cubes
   arma::cube cube_D = Rcpp::as<arma::cube>(D);
