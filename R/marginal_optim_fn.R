@@ -26,19 +26,29 @@
 #' @return (numeric) the function computes and returns the value of the
 #'                   posterior marginal likelihood for a given set of parameters
 marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, n.obs, 
-                                      m, kappa) {
+                                      m, kappa, 
+                                      prior.list = NULL
+                                     ) {
 
   # Name the parameters for ease of understanding
   alpha <- as.numeric(pars[1])
   sig <- as.numeric(pars[2])
-  nu <- as.numeric(pars[3])
-  xi <- as.numeric(pars[4])
-
-
+  phi <- as.numeric(pars[3])
+  tau <- as.numeric(pars[4])
+  
+  # Set Value for prior parameters of sigma^2 and tau^2
+  if(is.null(prior.list)){
+    prior.list <- list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2)}
+  a_sig <- prior.list$a_sig
+  b_sig <- prior.list$b_sig
+  a_tau <- prior.list$a_tau
+  b_tau <- prior.list$b_tau
+  
   # try coding it using rcpp:
   marginal <- posterior_marginal(m, n.obs, D, Y_post,
-                                 alpha, kappa, Y, W, nu, 
-                                 sig, xi, smallest.distance)
+                                 alpha, kappa, Y, W, phi, 
+                                 sig, tau, smallest.distance,
+                                a_sig, b_sig, a_tau, b_tau)
   
   return(marginal)
 }
@@ -60,13 +70,19 @@ marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, 
 #' @export
 NNRCM.marginal.infer <- function(Y, observed.locations, smoothness, 
                                    n.neighbors = 10, 
-                                   starting.values = c(0, 0.5, 0.5, 0.5)) {
+                                   starting.values = c(0, 0.5, 0.5, 0.5),
+                                prior.list = NULL) {
 
   # Extract values
   n.obs <- length(Y)
   m <- n.neighbors
   distance.first <- fields::rdist(observed.locations[1:2, ], observed.locations[3:n.obs,])
   smallest.distance <- min(distance.first[distance.first !=0])
+  
+    # Set Value for prior parameters of sigma^2 and tau^2
+  if(is.null(prior.list)){
+    prior.list <- list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2)}
+  
   
   # check that the degrees of freedom are in the correct range:
   if(starting.values[1] < n.obs + 2) {
@@ -113,6 +129,7 @@ NNRCM.marginal.infer <- function(Y, observed.locations, smoothness,
                    W = W - 1,
                    n.obs = n.obs,
                    kappa = smoothness,
+                   prior.list = prior.list,
                    method = "L-BFGS-B",
                    lower = c(n.obs + 2, 0.0001, 0.0001, 0.0001),
                    upper = c(Inf, Inf, Inf, Inf),
@@ -131,7 +148,7 @@ NNRCM.marginal.infer <- function(Y, observed.locations, smoothness,
 #' @param observed.locations (matrix) observed locations (n.obs X 2)
 #' @param predicted.locations (matrix) predicted locations (n.pred X 2)
 #' @param optim.pars (vector) vector of length four in the following order: 
-#'   alpha, sigma, nu, xi
+#'   alpha, sigma, phi, tau
 #' @param smoothness (numeric) smoothness parameter for the Matern covariance function
 #' @param n.neighbors (integer) number of neighbors to include in N(s) (default: 10)
 #' @param n.sim (integer) prediction sample size to output (default: 1000)
