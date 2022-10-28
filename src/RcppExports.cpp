@@ -434,8 +434,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // posterior_marginal
-double posterior_marginal(int n_neighbors, double n_obs, Rcpp::NumericVector& D, Rcpp::NumericVector& Y_post, double a, double kappa, arma::colvec y, arma::Mat<int> W, double phi, double sigma, double tau, double small);
-RcppExport SEXP _NNRCM_posterior_marginal(SEXP n_neighborsSEXP, SEXP n_obsSEXP, SEXP DSEXP, SEXP Y_postSEXP, SEXP aSEXP, SEXP kappaSEXP, SEXP ySEXP, SEXP WSEXP, SEXP phiSEXP, SEXP sigmaSEXP, SEXP tauSEXP, SEXP smallSEXP) {
+double posterior_marginal(int n_neighbors, double n_obs, Rcpp::NumericVector& D, Rcpp::NumericVector& Y_post, double a, double kappa, arma::colvec y, arma::Mat<int> W, double phi, double sigma, double tau, double small, double a_sig, double b_sig, double a_tau, double b_tau);
+RcppExport SEXP _NNRCM_posterior_marginal(SEXP n_neighborsSEXP, SEXP n_obsSEXP, SEXP DSEXP, SEXP Y_postSEXP, SEXP aSEXP, SEXP kappaSEXP, SEXP ySEXP, SEXP WSEXP, SEXP phiSEXP, SEXP sigmaSEXP, SEXP tauSEXP, SEXP smallSEXP, SEXP a_sigSEXP, SEXP b_sigSEXP, SEXP a_tauSEXP, SEXP b_tauSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -451,7 +451,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
     Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< double >::type small(smallSEXP);
-    rcpp_result_gen = Rcpp::wrap(posterior_marginal(n_neighbors, n_obs, D, Y_post, a, kappa, y, W, phi, sigma, tau, small));
+    Rcpp::traits::input_parameter< double >::type a_sig(a_sigSEXP);
+    Rcpp::traits::input_parameter< double >::type b_sig(b_sigSEXP);
+    Rcpp::traits::input_parameter< double >::type a_tau(a_tauSEXP);
+    Rcpp::traits::input_parameter< double >::type b_tau(b_tauSEXP);
+    rcpp_result_gen = Rcpp::wrap(posterior_marginal(n_neighbors, n_obs, D, Y_post, a, kappa, y, W, phi, sigma, tau, small, a_sig, b_sig, a_tau, b_tau));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -625,7 +629,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_NNRCM_mv_tau_sample", (DL_FUNC) &_NNRCM_mv_tau_sample, 7},
     {"_NNRCM_mv_mcmc_loop", (DL_FUNC) &_NNRCM_mv_mcmc_loop, 33},
     {"_NNRCM_mv_posterior_hierarchical_prediction", (DL_FUNC) &_NNRCM_mv_posterior_hierarchical_prediction, 16},
-    {"_NNRCM_posterior_marginal", (DL_FUNC) &_NNRCM_posterior_marginal, 12},
+    {"_NNRCM_posterior_marginal", (DL_FUNC) &_NNRCM_posterior_marginal, 16},
     {"_NNRCM_posterior_marginal_prediction", (DL_FUNC) &_NNRCM_posterior_marginal_prediction, 11},
     {"_NNRCM_mv_posterior_marginal_prediction", (DL_FUNC) &_NNRCM_mv_posterior_marginal_prediction, 9},
     {"_NNRCM_mv_posterior_marginal_prediction_coregionalization", (DL_FUNC) &_NNRCM_mv_posterior_marginal_prediction_coregionalization, 9},

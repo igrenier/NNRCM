@@ -13,7 +13,8 @@ marginal.likelihood.optim(
   W,
   n.obs,
   m,
-  kappa
+  kappa,
+  prior.list = NULL
 )
 }
 \arguments{

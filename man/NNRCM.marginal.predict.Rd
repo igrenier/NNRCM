@@ -22,7 +22,7 @@ NNRCM.marginal.predict(
 \item{predicted.locations}{(matrix) predicted locations (n.pred X 2)}
 
 \item{optim.pars}{(vector) vector of length four in the following order:
-alpha, sigma, nu, xi}
+alpha, sigma, phi, tau}
 
 \item{smoothness}{(numeric) smoothness parameter for the Matern covariance function}
 

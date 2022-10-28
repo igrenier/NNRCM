@@ -81,8 +81,8 @@ mv_posterior_hierarchical_prediction <- function(n_neighbors, n_pred, D, w_post,
     .Call(`_NNRCM_mv_posterior_hierarchical_prediction`, n_neighbors, n_pred, D, w_post, a, kappa, nu, nugget, sigma, tau_v, mcmc_samples, n_obs, X, beta, Wnb, Aw)
 }
 
-posterior_marginal <- function(n_neighbors, n_obs, D, Y_post, a, kappa, y, W, phi, sigma, tau, small) {
-    .Call(`_NNRCM_posterior_marginal`, n_neighbors, n_obs, D, Y_post, a, kappa, y, W, phi, sigma, tau, small)
+posterior_marginal <- function(n_neighbors, n_obs, D, Y_post, a, kappa, y, W, phi, sigma, tau, small, a_sig, b_sig, a_tau, b_tau) {
+    .Call(`_NNRCM_posterior_marginal`, n_neighbors, n_obs, D, Y_post, a, kappa, y, W, phi, sigma, tau, small, a_sig, b_sig, a_tau, b_tau)
 }
 
 posterior_marginal_prediction <- function(n_neighbors, n_pred, D, Y_post, a, kappa, nu, sigma, tau, mcmc_samples, n_obs) {

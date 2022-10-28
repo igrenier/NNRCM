@@ -9,7 +9,8 @@ NNRCM.marginal.infer(
   observed.locations,
   smoothness,
   n.neighbors = 10,
-  starting.values = c(0, 0.5, 0.5, 0.5)
+  starting.values = c(0, 0.5, 0.5, 0.5),
+  prior.list = NULL
 )
 }
 \arguments{
