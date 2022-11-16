@@ -23,6 +23,8 @@
 #' @param n.obs (integer) number of observations in our dataset
 #' @param m (integer) number of neighbors to include in N(s)
 #' @param kappa (numeric) smoothness parameter for the Matern covariance function
+#' @param prior.list Prior parameters for sigma2 and tau2 where the prior for sigma2 is IG(a_sig,b_sig) and
+#'     the prior for tau2 is IG(a_tau,b_tau). Default is list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2)
 #' @return (numeric) the function computes and returns the value of the
 #'                   posterior marginal likelihood for a given set of parameters
 marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, n.obs, 
