@@ -27,7 +27,7 @@
 #'                   posterior marginal likelihood for a given set of parameters
 marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, n.obs, 
                                       m, kappa, 
-                                      prior.list = NULL
+                                      prior.list = list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2)
                                      ) {
 
   # Name the parameters for ease of understanding
@@ -37,8 +37,6 @@ marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, 
   tau <- as.numeric(pars[4])
   
   # Set Value for prior parameters of sigma^2 and tau^2
-  if(is.null(prior.list)){
-    prior.list <- list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2)}
   a_sig <- prior.list$a_sig
   b_sig <- prior.list$b_sig
   a_tau <- prior.list$a_tau
