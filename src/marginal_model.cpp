@@ -150,7 +150,7 @@ double posterior_marginal(int n_neighbors, double n_obs, Rcpp::NumericVector& D,
                           Rcpp::NumericVector& Y_post, double a, double kappa, 
                          arma::colvec y, arma::Mat<int> W,
                          double phi, double sigma, double tau, double small, 
-                         double a_sig, double b_sig, double a_tau, double b_tau, double a_phi) {
+                         double a_sig, double b_sig, double a_tau, double b_tau, double a_nu) {
 
   // Create cubes
   arma::cube cube_D = Rcpp::as<arma::cube>(D);
@@ -184,7 +184,7 @@ double posterior_marginal(int n_neighbors, double n_obs, Rcpp::NumericVector& D,
   double marginal = marginal_likelihood.tmp_marginal;
   
   // compute log prior
-  double prior = (a_phi - 1) * log(phi) - a_phi * phi / small - (a_sig + 1) * log(sigma) - b_sig / sigma - 
+  double prior = (a_nu - 1) * log(phi) - a_nu * phi / small - (a_sig + 1) * log(sigma) - b_sig / sigma - 
       (a_tau + 1) * log(tau) - b_tau / tau - 2 * log(a);
       
   // compute normalizing constant
@@ -319,7 +319,7 @@ double mv_posterior_marginal(int n_neighbors, double n_obs, Rcpp::NumericVector&
                           Rcpp::NumericVector& Y_post, double a, arma::colvec kappa, 
                           arma::colvec y, arma::Mat<int> W, arma::Mat<int> Wnb,
                           arma::colvec phi, arma::colvec sigma, arma::colvec tau, 
-                          double small) {
+                          double small, double a_sig, double b_sig, double a_tau, double b_tau, double a_nu) {
   // compute qm
   int m2 = 2 * n_neighbors;
   
@@ -357,13 +357,13 @@ double mv_posterior_marginal(int n_neighbors, double n_obs, Rcpp::NumericVector&
   
   // compute log prior
   // double prior = 0;
-  double prior = log(phi(0)) - 2 * phi(0) / small + 
-    log(phi(1)) - 2 * phi(1) / small +
-    log(phi(2)) - 2 * phi(2) / small - 
-    4 * log(sigma(0)) - 2 / sigma(0) - 
-    4 * log(sigma(1)) - 2 / sigma(1) -
-    4 * log(tau(0)) - 2 / tau(0) -
-    4 * log(tau(1)) - 2 / tau(1) - 
+  double prior = (a_nu - 1) * log(phi(0)) - a_nu * phi(0) / small + 
+    (a_nu - 1) * log(phi(1)) - a_nu * phi(1) / small +
+    (a_nu - 1) * log(phi(2)) - a_nu * phi(2) / small - 
+    (a_sig + 1) * log(sigma(0)) - b_sig / sigma(0) - 
+    (a_sig + 1) * log(sigma(1)) - b_sig / sigma(1) -
+    (a_tau + 1) * log(tau(0)) - b_tau / tau(0) -
+    (a_tau + 1) * log(tau(1)) - b_tau / tau(1) - 
     2 * log(a);
   
   // compute normalizing constant
@@ -380,7 +380,7 @@ double mv_posterior_marginal_coregionalization(int n_neighbors, double n_obs, Rc
                              Rcpp::NumericVector& Y_post, double a, arma::colvec kappa, 
                              arma::colvec y, arma::Mat<int> W, arma::Mat<int> Wnb,
                              arma::colvec phi, arma::colvec A, arma::colvec tau, 
-                             double small) {
+                             double small, double a_tau, double b_tau, double a_nu) {
   // compute qm
   int m2 = 2 * n_neighbors;
   
@@ -418,10 +418,10 @@ double mv_posterior_marginal_coregionalization(int n_neighbors, double n_obs, Rc
   
   // compute log prior
   // double prior = 0;
-  double prior = log(phi(0)) - 2 * phi(0) / small + 
-    log(phi(1)) - 2 * phi(1) / small -
-    4 * log(tau(0)) - 2 / tau(0) -
-    4 * log(tau(1)) - 2 / tau(1) - 
+  double prior = (a_nu - 1) * log(phi(0)) - a_nu * phi(0) / small + 
+    (a_nu - 1) * log(phi(1)) - a_nu * phi(1) / small -
+    (a_tau + 1) * log(tau(0)) - b_tau / tau(0) -
+    (a_tau + 1) * log(tau(1)) - b_tau / tau(1) - 
     2 * log(a);
   
   // compute normalizing constant
