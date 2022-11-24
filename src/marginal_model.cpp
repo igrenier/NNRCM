@@ -184,8 +184,8 @@ double posterior_marginal(int n_neighbors, double n_obs, Rcpp::NumericVector& D,
   double marginal = marginal_likelihood.tmp_marginal;
   
   // compute log prior
-  double prior = log(phi) - 2 * phi / small - (a_sig + 1) * log(sigma) - (b_sig) / sigma - 
-      (a_tau + 1) * log(tau) - (b_tau) / tau - 2 * log(a);
+  double prior = log(phi) - 2 * phi / small - (a_sig + 1) * log(sigma) - b_sig / sigma - 
+      (a_tau + 1) * log(tau) - b_tau / tau - 2 * log(a);
       
   // compute normalizing constant
   // double constant = n_obs * (1 / 2 * log((a - n_obs + n_neighbors + 2) / 2 - 1) - 1 / 2 * log(M_PI));
