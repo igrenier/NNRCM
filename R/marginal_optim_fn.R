@@ -27,7 +27,7 @@
 #'                   posterior marginal likelihood for a given set of parameters
 marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, n.obs, 
                                       m, kappa, 
-                                      prior.list = list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2)
+                                      prior.list = list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2, a_phi = 2)
                                      ) {
 
   # Name the parameters for ease of understanding
@@ -41,12 +41,13 @@ marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, 
   b_sig <- prior.list$b_sig
   a_tau <- prior.list$a_tau
   b_tau <- prior.list$b_tau
+  a_phi <- prior.list$a_phi
   
   # try coding it using rcpp:
   marginal <- posterior_marginal(m, n.obs, D, Y_post,
                                  alpha, kappa, Y, W, phi, 
                                  sig, tau, smallest.distance,
-                                a_sig, b_sig, a_tau, b_tau)
+                                a_sig, b_sig, a_tau, b_tau, a_phi)
   
   return(marginal)
 }
@@ -69,7 +70,7 @@ marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, 
 NNRCM.marginal.infer <- function(Y, observed.locations, smoothness, 
                                    n.neighbors = 10, 
                                    starting.values = c(0, 0.5, 0.5, 0.5),
-                                prior.list = NULL) {
+                                prior.list = list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2, a_phi = 2)) {
 
   # Extract values
   n.obs <- length(Y)
@@ -77,9 +78,6 @@ NNRCM.marginal.infer <- function(Y, observed.locations, smoothness,
   distance.first <- fields::rdist(observed.locations[1:2, ], observed.locations[3:n.obs,])
   smallest.distance <- min(distance.first[distance.first !=0])
   
-    # Set Value for prior parameters of sigma^2 and tau^2
-  if(is.null(prior.list)){
-    prior.list <- list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2)}
   
   
   # check that the degrees of freedom are in the correct range:
