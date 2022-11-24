@@ -27,7 +27,7 @@
 #'                   posterior marginal likelihood for a given set of parameters
 marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, n.obs, 
                                       m, kappa, 
-                                      prior.list = list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2)
+                                      prior.list = list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2, a_nu = 2)
                                      ) {
 
   # Name the parameters for ease of understanding
@@ -41,12 +41,13 @@ marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, 
   b_sig <- prior.list$b_sig
   a_tau <- prior.list$a_tau
   b_tau <- prior.list$b_tau
+  a_nu  <- prior.list$a_nu
   
   # try coding it using rcpp:
   marginal <- posterior_marginal(m, n.obs, D, Y_post,
                                  alpha, kappa, Y, W, phi, 
                                  sig, tau, smallest.distance,
-                                a_sig, b_sig, a_tau, b_tau)
+                                a_sig, b_sig, a_tau, b_tau, a_nu)
   
   return(marginal)
 }
@@ -69,7 +70,7 @@ marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, 
 NNRCM.marginal.infer <- function(Y, observed.locations, smoothness, 
                                    n.neighbors = 10, 
                                    starting.values = c(0, 0.5, 0.5, 0.5),
-                                prior.list = list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2)) {
+                                prior.list = list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2, a_nu = 2)) {
 
   # Extract values
   n.obs <- length(Y)
@@ -215,12 +216,20 @@ NNRCM.marginal.predict <- function(Y, observed.locations, predicted.locations,
 #' @export                   
 mv.marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, Wnb, n.obs, 
                                          m, kappa, cov.family, parsimonious , 
-                                         coregionalization) {
+                                         coregionalization, 
+                                         prior.list = list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2, a_nu = 2)) {
   
   # Name the parameters for ease of understanding
   alpha <- as.numeric(pars[1])
   sig <- as.numeric(pars[2:4])
   xi <- as.numeric(pars[7:8]) 
+  
+  #Specify prior parameters
+  a_sig <- prior.list$a_sig
+  b_sig <- prior.list$b_sig
+  a_tau <- prior.list$a_tau
+  b_tau <- prior.list$b_tau
+  a_nu <- prior.list$a_nu
   
   if(coregionalization) {
     
@@ -229,7 +238,7 @@ mv.marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, 
     nu <- c(pars[5:6], 0)
     marginal <- mv_posterior_marginal_coregionalization(m, n.obs, D, Y_post,
                                       alpha, kappa, Y, W, Wnb, nu, 
-                                      A, xi, smallest.distance)
+                                      A, xi, smallest.distance, a_tau, b_tau, a_nu)
     
   } else {
     if(parsimonious ){
@@ -247,7 +256,7 @@ mv.marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, 
     # compute the posterior marginal value
     marginal <- mv_posterior_marginal(m, n.obs, D, Y_post,
                                       alpha, kappa, Y, W, Wnb, nu, 
-                                      sig, xi, smallest.distance)
+                                      sig, xi, smallest.distance, a_sig, b_sig, a_tau, b_tau, a_nu)
   }
 
 
@@ -277,7 +286,8 @@ NNRCM.bv.marginal.infer <- function(Y, observed.locations,
                                       starting.values = rep(0, 8), parsimonious = TRUE, 
                                       mcmc.samples = 1000, n.neighbors = 10,
                                       coregionalization = FALSE, neighbor.info = FALSE,
-                                      neighbor.seq = FALSE) {
+                                      neighbor.seq = FALSE,
+                                prior.list = list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2, a_nu = 2)) {
   
   # add v_r between 1 and infinity check
   
@@ -429,6 +439,7 @@ NNRCM.bv.marginal.infer <- function(Y, observed.locations,
             cov.family = cov.family,
             parsimonious  = parsimonious ,
             coregionalization = TRUE,
+            prior.list = prior.list,
             method = "L-BFGS-B",
             lower = c(n.obs + 2, -Inf, -Inf, -Inf, 0.001,0.001, 0.001, 0.001),
             upper = c(Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf),
@@ -448,6 +459,7 @@ NNRCM.bv.marginal.infer <- function(Y, observed.locations,
             kappa = smoothness,
             cov.family = cov.family,
             parsimonious  = parsimonious ,
+            prior.list = prior.list,
             coregionalization = FALSE,
             method = "L-BFGS-B",
             lower = c(n.obs + 2, 0.001, 0.001, -1, 0.001,0.001, 0.001, 0.001),
