@@ -69,7 +69,7 @@ marginal.likelihood.optim <- function(pars, Y, D, Y_post, smallest.distance, W, 
 NNRCM.marginal.infer <- function(Y, observed.locations, smoothness, 
                                    n.neighbors = 10, 
                                    starting.values = c(0, 0.5, 0.5, 0.5),
-                                prior.list = NULL) {
+                                prior.list = list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2)) {
 
   # Extract values
   n.obs <- length(Y)
@@ -77,9 +77,7 @@ NNRCM.marginal.infer <- function(Y, observed.locations, smoothness,
   distance.first <- fields::rdist(observed.locations[1:2, ], observed.locations[3:n.obs,])
   smallest.distance <- min(distance.first[distance.first !=0])
   
-    # Set Value for prior parameters of sigma^2 and tau^2
-  if(is.null(prior.list)){
-    prior.list <- list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2)}
+
   
   
   # check that the degrees of freedom are in the correct range:
