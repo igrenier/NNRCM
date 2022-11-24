@@ -150,7 +150,7 @@ double posterior_marginal(int n_neighbors, double n_obs, Rcpp::NumericVector& D,
                           Rcpp::NumericVector& Y_post, double a, double kappa, 
                          arma::colvec y, arma::Mat<int> W,
                          double phi, double sigma, double tau, double small, 
-                         double a_sig, double b_sig, double a_tau, double b_tau) {
+                         double a_sig, double b_sig, double a_tau, double b_tau, double a_phi) {
 
   // Create cubes
   arma::cube cube_D = Rcpp::as<arma::cube>(D);
@@ -184,7 +184,7 @@ double posterior_marginal(int n_neighbors, double n_obs, Rcpp::NumericVector& D,
   double marginal = marginal_likelihood.tmp_marginal;
   
   // compute log prior
-  double prior = log(phi) - 2 * phi / small - (a_sig + 1) * log(sigma) - b_sig / sigma - 
+  double prior = (a_phi - 1) * log(phi) - a_phi * phi / small - (a_sig + 1) * log(sigma) - b_sig / sigma - 
       (a_tau + 1) * log(tau) - b_tau / tau - 2 * log(a);
       
   // compute normalizing constant
