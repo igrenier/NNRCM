@@ -5,6 +5,7 @@ library(MASS)
 library(ggplot2)
 library(RandomFields)
 library(RConics)
+library(spBayes)
 
 # define the parameters
 N1 <- 50
