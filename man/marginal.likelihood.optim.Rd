@@ -14,7 +14,7 @@ marginal.likelihood.optim(
   n.obs,
   m,
   kappa,
-  prior.list = NULL
+  prior.list = list(a_sig = 3, b_sig = 2, a_tau = 3, b_tau = 2)
 )
 }
 \arguments{
